@@ -4,9 +4,9 @@ QHERE backend service
 
 ## Objectives
 
-* [ ] 📝 Diagram the Full Stack
-* [ ] 🔎 Differentiate between Client and Server
-* [ ] ⌨️ Get user input on the Client
+* [x] 📝 Diagram the Full Stack
+* [x] 🔎 Differentiate between Client and Server
+* [x] ⌨️ Get user input on the Client
 * [ ] ➡️ Send user input from the client with fetch to the server
 * [ ] 🗃 Store data in a database
 * [ ] 🔍 Retrieve data from a database on the Server
