@@ -5,7 +5,7 @@ const respond = require('../helpers/respond');
 
 const UserService = require('../services/UserService.js');
 
-
+//TO-DO: VALİDASYONLAR YAZILACAK
 router.post('/login', function(req, res, next) {
   UserService.login(req).then((result) => {
     respond.success(res, result);
@@ -15,7 +15,6 @@ router.post('/login', function(req, res, next) {
 });
 
 router.post('/register', function(req, res, next) {
-  console.log(req.body);
   UserService.register(req).then((result) => {
     respond.success(res, result);
   }).catch((err) => {

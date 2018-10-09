@@ -8,6 +8,9 @@ UserService.login = (req) => {
     return new Promise((resolve,reject) => {
         const user=req.body;
         User.findOne(user).then((userInstance) => {
+            if(!userInstance) {
+                return reject(UserError.UserNotFound()); 
+            }
             return resolve(userInstance);
         }).catch((err)=>{
             return reject(UserError.BusinessException()); 
@@ -16,19 +19,29 @@ UserService.login = (req) => {
 }
 
 UserService.register = (req) => {
-    return new Promise((resolve,reject) => {
-        const {userName,surName,email,password,gender}=req.body;
 
-        const user=User({
-            userName,
-            surName,
-            email,
-            password,
-            gender
-        })
-        const data=user.save();
-         return resolve(data);
-         return reject(UserError.BusinessException()); 
+    return new Promise((resolve,reject) => {
+        if(User.findOne({email: req.body.email}).then((userInstance) => {
+            if(userInstance) 
+                return reject(UserError.EmailExist()); 
+
+            const {userName,fullName,email,password,gender}=req.body;
+            var user = User({
+                userName,
+                fullName,
+                email,
+                password,
+                gender
+            });
+            user.save()
+            .then(userInstance => {
+                console.log(userInstance);
+                return resolve(userInstance);
+            })
+            .catch(err => {
+                return reject(UserError.BusinessException(err)); 
+            })
+        }));
     });
 }
 
