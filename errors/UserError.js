@@ -16,6 +16,14 @@ UserError.UserNotFound = () => {
     }
 };
 
+UserError.WrongPassword = () => {
+    return {
+        status: 404, 
+        name : 'WrongPassword',
+        message: 'User password wrong.'
+    }
+};
+
 UserError.EmailExist = () => {
     return {
         status: 404, 

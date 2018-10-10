@@ -22,5 +22,13 @@ router.post('/register', function(req, res, next) {
   });
 });
 
+router.post('/logout',function(req,res,mext){
+  UserService.logout(req).then((result)=>{
+    respond.success(res, result);
+  }).catch((err)=>{
+    respond.withError(res, err);
+  })
+});
+
 
 module.exports = router;
