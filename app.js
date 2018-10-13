@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
 const UserController = require('./routes/UserController');
+const ManagerController = require('./routes/ManagerController');
 
 const app = express();
 const db=require('./helpers/db')();
@@ -16,5 +17,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/user', UserController);
+app.use('/manager',ManagerController);
 
 module.exports = app;

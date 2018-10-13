@@ -20,6 +20,14 @@ tokenService.generateToken = function (instance) {
         });
 };
 
+tokenService.verifyToken=function(instance){
+    return new Promise(function(resolve,reject){
+        Token.find({'token.accessToken':instance}).then((token)=>{
+            return resolve(token[0].userId);
+        })
+    });
+};
+
 tokenService.removeToken = function (token) {
     console.log("met   "+token)
     return new Promise((resolve, reject) => {
