@@ -13,4 +13,12 @@ router.post('/createClass',function(req,res,next){
     });
 });
 
+
+router.put('/:id/approveStudent',function(req,res,next){
+    ManagerService.ApproveStudents(req).then((result)=>{
+        respond.success(res,result);
+    }).catch((err)=>{
+        respond.withError(res,err);
+    });
+});
 module.exports = router;
