@@ -21,4 +21,12 @@ router.put('/:id/approveStudent',function(req,res,next){
         respond.withError(res,err);
     });
 });
+
+router.get('/:id/rejectStudent',function(req,res,next){
+    ManagerService.RejectStudents(req).then((result)=>{
+        respond.success(res,result);
+    }).catch((err)=>{
+        respond.withError(res.err);
+    })
+})
 module.exports = router;

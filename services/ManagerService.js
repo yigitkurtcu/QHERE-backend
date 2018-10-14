@@ -57,4 +57,15 @@ ManagerService.ApproveStudents=(req)=>{
 })
 }
 
+ManagerService.RejectStudents=(req)=>{
+    return new Promise((resolve,reject)=>{
+        TokenService.verifyToken(req.headers.authorization).then((userId)=>{
+            Class.find({_id:req.params.id}).then((classInstance)=>{
+                let instance=classInstance[0].className+" sınıfına yaptığınız istek reddedildi.";
+                return resolve(instance)
+            })
+        })
+    })
+}
+
 module.exports=ManagerService;
