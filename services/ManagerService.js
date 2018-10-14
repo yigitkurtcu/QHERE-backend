@@ -1,4 +1,5 @@
 const Class =require('../models/Class')
+const User =require('../models/Users')
 const TokenService = require('./TokenService');
 const ManagerError=require('../errors/ManagerError');
 ManagerService={};
@@ -27,26 +28,33 @@ ManagerService.createClass=(req)=>{
 }
 
 ManagerService.ApproveStudents=(req)=>{
+
     return new Promise ((resolve,reject)=>{
         TokenService.verifyToken(req.headers.authorization).then((userId)=>{
 
+            User.find({schoolNumber:req.body.schoolNumber}).then((instance)=>{
+            const id=instance[0]._id.toString();
             Class.find({_id:req.params.id}).then((collection=>{
-
-                if(collection!==null){
-                    collection[0].students.forEach(Students => {
-                        if(Students.StudentId==userId)
-                            return reject (ManagerError.NotAcceptable());
-                    });
+                const studentId=collection[0].students.find(studentId=>studentId==id)
+                if(!studentId){
+                    Class.findOneAndUpdate({ _id: req.params.id}, { $push:{students:{$each: [id], $slice:collection[0].quota}}},{new: true}).then((updateClass)=>{
+                        if(collection[0].students.length==collection[0].quota){
+                            return reject(ManagerError.BadRequest())
+                        }else{
+                            return resolve(updateClass);
+                        }   
+                    }).catch((Err)=>{
+                            
+                    })
+                }else{
+                    return reject(ManagerError.NotAcceptable());
                 }
-
-                Class.findOneAndUpdate({ _id: req.params.id}, { $push: {students:{$each: [{StudentId:userId}], $slice: collection[0].quota}}},{new: true}).then((updateClass)=>{
-                        return resolve(updateClass);
-                }).catch((Err)=>{
-                        return reject(ManagerError.BusinessException())
-                })
-            }))
+            })
+                           
+            )
         })
     })
+})
 }
 
 module.exports=ManagerService;

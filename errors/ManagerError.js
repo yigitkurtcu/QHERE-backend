@@ -8,6 +8,14 @@ ManagerError.NotAcceptable = () => {
     }
 };
 
+ManagerError.BadRequest = () => {
+    return {
+        status: 400, 
+        name : 'Bad Request',
+        message: 'Bu Ders Kotası Dolu'
+    }
+};
+
 ManagerError.BusinessException = () => {
     return {
         status: 400, 
