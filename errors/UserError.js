@@ -18,7 +18,7 @@ UserError.UserNotFound = () => {
 
 UserError.WrongPassword = () => {
     return {
-        status: 404, 
+        status: 400, 
         name : 'WrongPassword',
         message: 'User password wrong.'
     }

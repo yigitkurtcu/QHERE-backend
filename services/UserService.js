@@ -73,7 +73,6 @@ UserService.register = (req) => {
 
 UserService.logout=(req)=>{
     return new Promise((resolve,reject)=>{
-        console.log(req.headers.authorization);
         TokenService.removeToken(req.headers.authorization).then((userInstance) => {
             return resolve(userInstance);
         }).catch((err) => {
