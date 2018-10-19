@@ -50,11 +50,11 @@ UserService.register = (req) => {
             if(userInstance) 
                 return reject(UserError.EmailExist());
             
-            const {userName,fullName,email,password,gender}=req.body;
+            const {schoolNumber,fullName,email,password,gender}=req.body;
             
                 bcrypt.hash(password,10).then(hash=>{
                     let user = User({
-                        userName,
+                        schoolNumber,
                         fullName,
                         email,
                         password:hash,
