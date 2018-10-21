@@ -17,9 +17,10 @@ UserService.login = (req) => {
                         TokenService.generateToken(req.body).then(function (token) {
                             userInstance = userInstance.toObject();
                             let response = {
-                                user: userInstance,
+                                userType: userInstance.userType,
                                 token: token
                             };
+                            console.log(userInstance);
                             let TokenSave=Token({
                                 userId:userInstance._id,
                                 userType: userInstance.userType,
