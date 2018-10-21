@@ -9,7 +9,7 @@ ManagerService.createClass=(req)=>{
     return new Promise ((resolve,reject)=>{
         TokenService.verifyToken(req.headers.authorization)
         .then((userId)=>{
-            TokenService.verifManager(req.headers.authorization)
+            TokenService.verifyManager(req.headers.authorization)
             .then(() => {
                 const {className,joinTime,quota,discontinuity,description}=req.body;
 

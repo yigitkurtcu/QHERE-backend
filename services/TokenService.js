@@ -42,7 +42,7 @@ tokenService.removeToken = function (token) {
     });
 }
 
-tokenService.verifManager=function(instance){
+tokenService.verifyManager=function(instance){
     return new Promise(function(resolve,reject){
         Token.find({'token.accessToken':instance})
         .then((token)=>{
