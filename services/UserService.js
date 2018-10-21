@@ -12,7 +12,6 @@ UserService.login = (req) => {
             if(!userInstance) {
                 return reject(UserError.UserNotFound()); 
             }else{
-                console.log(req.body.password);
                 bcrypt.compare(req.body.password,userInstance.password, function(err, res) {
                     if(res==true){
                         TokenService.generateToken(req.body).then(function (token) {
@@ -23,6 +22,7 @@ UserService.login = (req) => {
                             };
                             let TokenSave=Token({
                                 userId:userInstance._id,
+                                userType: userInstance.userType,
                                 token:{
                                     accessToken:token.accessToken
                                 }

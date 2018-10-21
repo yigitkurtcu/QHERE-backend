@@ -2,24 +2,36 @@ const Class =require('../models/Class')
 const User =require('../models/Users')
 const TokenService = require('./TokenService');
 const ManagerError=require('../errors/ManagerError');
+const AuthError=require('../errors/AuthError');
 ManagerService={};
 
 ManagerService.createClass=(req)=>{
     return new Promise ((resolve,reject)=>{
-        TokenService.verifyToken(req.headers.authorization).then((userId)=>{
+        TokenService.verifyToken(req.headers.authorization)
+        .then((userId)=>{
+            TokenService.verifManager(req.headers.authorization)
+            .then(() => {
+                const {className,joinTime,quota,discontinuity,description}=req.body;
 
-            const {className,joinTime,quota,discontinuity,description}=req.body;
-
-            let createClass=Class({
-                managerId:userId,
-                className,
-                joinTime,
-                quota,
-                discontinuity,
-                description
+                let createClass=Class({
+                    managerId:userId,
+                    className,
+                    joinTime,
+                    quota,
+                    discontinuity,
+                    description
+                })
+                createClass.save()
+                .then(classInstance => {
+                    return resolve(classInstance);
+                }).catch(err => {
+                    return reject(ManagerError.BusinessException()); 
+                })
+                return resolve(createClass);
+            }).catch(err => {
+                return reject(AuthError.NotAllowed());
             })
-            createClass.save();
-            return resolve(createClass);
+            
         }).catch((err)=>{
             return reject(err);
         })

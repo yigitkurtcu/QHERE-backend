@@ -5,6 +5,11 @@ var tokenSchema = mongoose.Schema({
         type:String,
         required: true,
     },
+    userType: {
+        type: String,
+        enum: ["Manager","Student"],
+        required: true
+    },
     token :{
         accessToken:{
             type : String,
