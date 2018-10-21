@@ -61,7 +61,11 @@ UserService.register = (req) => {
                         gender
                     });
                     user.save()
-                    return resolve(user);
+                    .then(userInstance => {
+                        return resolve(user);
+                    }).catch(err => {
+                        return reject(UserError.BusinessException()); 
+                    })
                 }).catch((err)=>{
                     return reject(UserError.BusinessException()); 
                 })

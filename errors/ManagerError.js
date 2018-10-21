@@ -2,7 +2,7 @@ const ManagerError = {};
 
 ManagerError.NotAcceptable = () => {
     return {
-        status: 406, 
+        status_code: 406, 
         name : 'Not Acceptable',
         message: 'Bu Derse Kayıtlısınız'
     }
@@ -10,7 +10,7 @@ ManagerError.NotAcceptable = () => {
 
 ManagerError.BadRequest = () => {
     return {
-        status: 400, 
+        status_code: 400, 
         name : 'Bad Request',
         message: 'Bu Ders Kotası Dolu'
     }
@@ -18,7 +18,7 @@ ManagerError.BadRequest = () => {
 
 ManagerError.BusinessException = () => {
     return {
-        status: 400, 
+        status_code: 400, 
         name : 'BussinesException',
         message: 'BusinessException'
     }

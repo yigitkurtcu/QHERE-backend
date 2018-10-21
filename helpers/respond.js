@@ -6,8 +6,8 @@ const respondSuccess = function (res, data) {
 };
 
 const respondWithError = function (res, error, status_code) {
-    error.status = status_code || error.status || 500;
-    return res.status(error.status).json({
+    error.status_code = status_code || error.status_code || 500;
+    return res.status(error.status_code).json({
         error
     })
 };
