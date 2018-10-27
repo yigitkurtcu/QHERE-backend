@@ -25,6 +25,8 @@ app.use('/user', UserController);
 app.use('/manager', ManagerController);
 app.use('/student', StudentController);
 
-
+app.use(function (req,res) {
+    respond.withError(res, SystemError.BusinessException());
+ });
 
 module.exports = app;

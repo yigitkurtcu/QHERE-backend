@@ -14,7 +14,7 @@ ManagerService.createClass=(req)=>{
                 const {className,joinTime,quota,discontinuity,description,managerName}=req.body;
 
                 let createClass=Class({
-                    managerId:"5bcbf5013c690610b83c2d20",
+                    managerId,
                     className,
                     joinTime,
                     quota,
