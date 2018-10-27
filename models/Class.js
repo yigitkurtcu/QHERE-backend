@@ -5,6 +5,10 @@ var classSchema = mongoose.Schema({
         type:String,
         required: true,
     },
+    managerName:{
+        type:String,
+        required: true,
+    },
     className:{
         type:String,
         required: true,

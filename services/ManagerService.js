@@ -11,15 +11,16 @@ ManagerService.createClass=(req)=>{
         .then((userId)=>{
             TokenService.verifyManager(req.headers.authorization)
             .then(() => {
-                const {className,joinTime,quota,discontinuity,description}=req.body;
+                const {className,joinTime,quota,discontinuity,description,managerName}=req.body;
 
                 let createClass=Class({
-                    managerId:userId,
+                    managerId:"5bcbf5013c690610b83c2d20",
                     className,
                     joinTime,
                     quota,
                     discontinuity,
-                    description
+                    description,
+                    managerName
                 })
                 createClass.save()
                 .then(classInstance => {

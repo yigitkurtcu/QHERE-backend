@@ -37,9 +37,9 @@ UserService.login = (req) => {
                         return reject(UserError.WrongPassword());
                     }
                 });
-            }}).catch((err)=>{
-                return reject(UserError.BusinessException()); 
-            })
+        }}).catch((err)=>{
+            return reject(UserError.BusinessException()); 
+        })
     })
 }
     
