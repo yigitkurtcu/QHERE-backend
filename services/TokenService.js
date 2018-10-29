@@ -32,10 +32,13 @@ tokenService.verifyToken=function(instance){
 };
 
 tokenService.removeToken = function (token) {
-    console.log("met   "+token)
+    
     return new Promise((resolve, reject) => {
-        Token.findOneAndDelete({ "token.accessToken": token }).then(() => {
-            return resolve("Başarılı bir şekilde token silindi")
+        Token.findOneAndDelete({ "token.accessToken": token }).then((data) => {
+            if(data===null)
+                return resolve("Böyle bir token yok")
+            else
+                return resolve("Başarılı bir şekilde token silindi")
         }).catch((err) => {
             return reject(new AuthErrors.TokenGenerateException(err))
         });
