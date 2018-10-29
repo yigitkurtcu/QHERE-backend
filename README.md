@@ -4,8 +4,8 @@ QHERE backend service
 
 ## Account Services
 
-* [ ] Register
-* [ ] Login
+* [x] Register
+* [x] Login
 * [ ] Logout
 * [ ] Activate
   * [ ] Send activation code
@@ -16,10 +16,10 @@ QHERE backend service
   
 ## Manager Services
 
-* [ ] CreateClass
+* [x] CreateClass
 * [ ] GetClassRequests
-* [ ] ApproveStudents
-* [ ] RejectStudents
+* [x] ApproveStudents
+* [x] RejectStudents
 * [ ] CreateQhere
 * [ ] ListActiveClassInfo
 * [ ] ListClassInfo
@@ -27,7 +27,7 @@ QHERE backend service
 
 ## Student Services
 
-* [ ] GetOpenClasses
+* [x] GetOpenClasses
 * [ ] JoinClass
 * [ ] JoinRollCall
 * [ ] ListClasses
