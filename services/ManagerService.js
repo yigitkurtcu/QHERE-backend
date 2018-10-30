@@ -79,4 +79,24 @@ ManagerService.RejectStudents=(req)=>{
     })
 }
 
+ManagerService.getClasses=(req)=>{
+    return new Promise((resolve,reject)=>{
+        TokenService.verifyToken(req.headers.authorization)
+        .then((userId)=>{
+            TokenService.verifyManager(req.headers.authorization)
+            .then(() => {
+                Class.find({managerId:userId}).then((classes)=>{
+                    return resolve (classes)
+                }).catch((err)=>{
+                    return reject (ManagerError.BadRequest())
+                })
+            }).catch((err)=>{
+                return reject (ManagerError.BadRequest())
+            })
+        }).catch((err)=>{
+            return reject (ManagerError.BadRequest())
+        })
+    })
+}
+
 module.exports=ManagerService;
