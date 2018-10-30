@@ -32,7 +32,6 @@ tokenService.verifyToken=function(instance){
 };
 
 tokenService.removeToken = function (token) {
-    console.log("met   "+token)
     return new Promise((resolve, reject) => {
         Token.findOneAndDelete({ "token.accessToken": token }).then(() => {
             return resolve("Başarılı bir şekilde token silindi")
@@ -44,11 +43,11 @@ tokenService.removeToken = function (token) {
 
 tokenService.verifyManager=function(instance){
     return new Promise(function(resolve,reject){
-        Token.find({'token.accessToken':instance})
+        Token.findOne({'token.accessToken':instance})
         .then((token)=>{
             if(token.userType != 'Manager')
                 return reject(AuthError.NotAllowed());
-            return resolve(token[0].userId);
+            return resolve(token.userId);
         }).catch(err => {
             return reject(AuthError.WrongToken());
         })

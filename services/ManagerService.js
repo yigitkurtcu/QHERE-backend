@@ -14,7 +14,7 @@ ManagerService.createClass=(req)=>{
                 const {className,joinTime,quota,discontinuity,description,managerName}=req.body;
 
                 let createClass=Class({
-                    managerId,
+                    managerId: userId,
                     className,
                     joinTime,
                     quota,
@@ -46,35 +46,33 @@ ManagerService.ApproveStudents=(req)=>{
         TokenService.verifyToken(req.headers.authorization).then((userId)=>{
 
             User.find({schoolNumber:req.body.schoolNumber}).then((instance)=>{
-            const id=instance[0]._id.toString();
-            Class.find({_id:req.params.id}).then((collection=>{
-                const studentId=collection[0].students.find(studentId=>studentId==id)
-                if(!studentId){
-                    Class.findOneAndUpdate({ _id: req.params.id}, { $push:{students:{$each: [id], $slice:collection[0].quota}}},{new: true}).then((updateClass)=>{
-                        if(collection[0].students.length==collection[0].quota){
-                            return reject(ManagerError.BadRequest())
-                        }else{
-                            return resolve(updateClass);
-                        }   
-                    }).catch((Err)=>{
-                            
-                    })
-                }else{
-                    return reject(ManagerError.NotAcceptable());
-                }
+                const id=instance[0]._id.toString();
+                Class.find({_id:req.params.id}).then(collection=>{
+                    const studentId=collection[0].students.find(studentId=>studentId==id)
+                    if(!studentId){
+                        Class.findOneAndUpdate({ _id: req.params.id}, { $push:{students:{$each: [id], $slice:collection[0].quota}}},{new: true}).then((updateClass)=>{
+                            if(collection[0].students.length==collection[0].quota){
+                                return reject(ManagerError.BadRequest())
+                            }else{
+                                return resolve(updateClass);
+                            }   
+                        }).catch((Err)=>{
+                                
+                        })
+                    }else{
+                        return reject(ManagerError.NotAcceptable());
+                    }
+                })
             })
-                           
-            )
         })
     })
-})
 }
 
 ManagerService.RejectStudents=(req)=>{
     return new Promise((resolve,reject)=>{
         TokenService.verifyToken(req.headers.authorization).then((userId)=>{
             Class.find({_id:req.params.id}).then((classInstance)=>{
-                let instance=classInstance[0].className+" sınıfına yaptığınız istek reddedildi.";
+                let instance=classInstance[0].className+" sınıfına yaptığınız istek reddedildi."; //!!Hocanın servisi öğrenci bu mesajı göremez.
                 return resolve(instance)
             })
         })

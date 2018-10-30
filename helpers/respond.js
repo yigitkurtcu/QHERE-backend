@@ -1,5 +1,4 @@
 const respondSuccess = function (res, data) {
-    console.log('Data :', data)
     return res.status(200).json({
         status_code: 200,
         data: data
