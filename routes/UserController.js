@@ -30,5 +30,20 @@ router.post('/logout',function(req,res,mext){
   })
 });
 
+router.post('/forgot',function(req,res,next){
+  UserService.forgot(req).then((result)=>{
+    respond.success(res, result);
+  }).catch((err)=>{
+    respond.withError(res, err);
+  })
+});
+
+router.post('/resetPassword',function(req,res){
+  UserService.resetPassword(req).then((result)=>{
+    respond.success(res,result);
+  }).catch((err)=>{
+    respond.withError(res,err);
+  })
+})
 
 module.exports = router;

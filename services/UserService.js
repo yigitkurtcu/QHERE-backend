@@ -1,9 +1,10 @@
 const bcrypt =require('bcryptjs');
 const UserError = require('../errors/UserError');
 const TokenService = require('./TokenService');
+const MailService=require('./MailService');
 const User=require('../models/Users')
 const Token=require('../models/Token')
-
+const AuthError = require('../errors/AuthError');
 const UserService = {};
 
 UserService.login = (req) => {
@@ -78,11 +79,62 @@ UserService.register = (req) => {
 
 UserService.logout=(req)=>{
     return new Promise((resolve,reject)=>{
-        TokenService.removeToken(req.headers.authorization).then((userInstance) => {
-            return resolve(userInstance);
-        }).catch((err) => {
-            return reject(err);
-        });
+        TokenService.verifyToken(req.headers.authorization).then((data)=> {
+            TokenService.removeToken(req.headers.authorization).then((userInstance) => {
+                return resolve(userInstance);
+            }).catch((err) => {
+                return reject(AuthError.WrongToken());
+            });
+        }).catch((err)=>{
+            return reject(AuthError.WrongToken());
+        })  
+        
+    })
+}
+
+UserService.forgot=(req)=>{
+    return new Promise((resolve,reject)=>{
+        User.findOne({email:req.body.email}).then((userInstance)=>{
+            let user={
+                _id:userInstance._id,
+                email:userInstance.email
+            }
+            if(user !== null){
+                MailService.getMail(user).then((res)=>{
+                    return resolve(res)
+                }).catch((err)=>{
+                    return reject(err)
+                })
+            }else{
+                return reject (UserError.BusinessException())
+            }         
+        }).catch((err)=>{
+            return reject(err)
+        })
+
+    })
+}
+
+UserService.resetPassword=(req)=>{
+    return new Promise((resolve,reject)=>{
+        User.find({_id:req.body._id}).then((userInstance)=>{
+            if(userInstance){
+                bcrypt.hash(req.body.newPassword,10).then(hashPassword=>{
+                    let newPassword=hashPassword
+                    User.findOneAndUpdate({_id:req.body._id},{$set:{password:newPassword}},{new: true}).then((userInstance)=>{
+                        return resolve (userInstance)
+                    }).catch((err)=>{
+                        return reject (UserError.BusinessException())
+                    })
+
+                }).catch((err)=>{
+                    return reject(err);
+                })
+            }
+            
+        }).catch((err)=>{
+            console.log(err);
+        })
     })
 }
 
