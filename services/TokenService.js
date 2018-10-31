@@ -24,8 +24,13 @@ tokenService.verifyToken=function(instance){
     return new Promise(function(resolve,reject){
         Token.find({'token.accessToken':instance})
         .then((token)=>{
-            return resolve(token[0].userId);
+            var tokenData = {
+                userId: token[0].userId || null,
+                schoolNumber: token[0].schoolNumber
+            }
+            return resolve(tokenData);
         }).catch(err => {
+            console.log(err)
             return reject(AuthError.WrongToken());
         })
     });

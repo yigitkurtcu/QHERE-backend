@@ -1,10 +1,10 @@
 const SystemError = {};
 
-SystemError.BusinessException = () => {
+SystemError.BusinessException = (err) => {
     return {
         status_code: 400, 
         name : 'BussinesException',
-        message: 'BusinessException'
+        message: err || 'BusinessException'
     }
 };
 

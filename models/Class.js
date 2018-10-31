@@ -28,6 +28,11 @@ var classSchema = mongoose.Schema({
     description:{
         type:String,
     },
-    students:[]
+    students:[{
+        userId: String,
+        fullName: String,
+        email: String,
+        schoolNumber: Number
+    }]
 });
 module.exports = mongoose.model('Class', classSchema);

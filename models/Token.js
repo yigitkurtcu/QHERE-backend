@@ -10,6 +10,10 @@ var tokenSchema = mongoose.Schema({
         enum: ["Manager","Student"],
         required: true
     },
+    schoolNumber: {
+        type: Number,
+        required: true
+    },
     token :{
         accessToken:{
             type : String,

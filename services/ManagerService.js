@@ -1,8 +1,10 @@
+const _ = require('lodash');
 const Class =require('../models/Class')
 const User =require('../models/Users')
 const TokenService = require('./TokenService');
 const ManagerError=require('../errors/ManagerError');
 const AuthError=require('../errors/AuthError');
+const SystemError=require('../errors/SystemError');
 ManagerService={};
 
 ManagerService.createClass=(req)=>{
@@ -40,30 +42,34 @@ ManagerService.createClass=(req)=>{
     
 }
 
-ManagerService.ApproveStudents=(req)=>{
+ManagerService.ApproveStudents=(req)=>{ //Her hoca sadece kendi sınıfına ekleyebilmeli. verifyManager olmalı
 
     return new Promise ((resolve,reject)=>{
         TokenService.verifyToken(req.headers.authorization).then((userId)=>{
-
-            User.find({schoolNumber:req.body.schoolNumber}).then((instance)=>{
+            User.find({schoolNumber:req.body.schoolNumber}).then((instance)=>{  //schollNumber unique olmalı
                 const id=instance[0]._id.toString();
                 Class.find({_id:req.params.id}).then(collection=>{
-                    const studentId=collection[0].students.find(studentId=>studentId==id)
+                    const studentId=collection[0].students.find(student=> student.userId == id)
                     if(!studentId){
-                        Class.findOneAndUpdate({ _id: req.params.id}, { $push:{students:{$each: [id], $slice:collection[0].quota}}},{new: true}).then((updateClass)=>{
+                        var user = { userId: instance[0]._id, fullName: instance[0].fullName, email: instance[0].email, schoolNumber: instance[0].schoolNumber };
+                        Class.findOneAndUpdate({ _id: req.params.id}, { $push:{"students": user}},{new: true}).then((updateClass)=>{
                             if(collection[0].students.length==collection[0].quota){
                                 return reject(ManagerError.BadRequest())
                             }else{
                                 return resolve(updateClass);
                             }   
-                        }).catch((Err)=>{
-                                
+                        }).catch((err)=>{
+                                return reject(SystemError.BusinessException(err));
                         })
                     }else{
                         return reject(ManagerError.NotAcceptable());
                     }
-                })
-            })
+                }).catch(err => {
+                    return reject(SystemError.BusinessException(err));
+                }) 
+            }).catch(err => {
+                return reject(SystemError.BusinessException(err));
+            }) 
         })
     })
 }

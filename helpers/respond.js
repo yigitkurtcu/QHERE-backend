@@ -6,7 +6,7 @@ const respondSuccess = function (res, data) {
 };
 
 const respondWithError = function (res, error, status_code) {
-    if(error.status_code != undefined)
+    if(error != undefined && error.status_code != undefined)
         status_code = error.status_code
     else if(status_code == undefined)
         status_code = 500;

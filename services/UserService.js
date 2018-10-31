@@ -25,6 +25,7 @@ UserService.login = (req) => {
                             let TokenSave=Token({
                                 userId:userInstance._id,
                                 userType: userInstance.userType,
+                                schoolNumber: userInstance.schoolNumber,
                                 token:{
                                     accessToken:token.accessToken
                                 }

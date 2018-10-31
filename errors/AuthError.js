@@ -16,5 +16,12 @@ AuthError.NotAllowed = () => {
     }
 };
 
+AuthError.UnauthorizedError = msg => {
+    return {
+        status_code: 401, 
+        name : 'UnauthorizedError',
+        message: 'Unauthorized.'
+    }
+};
 
 module.exports = AuthError;
