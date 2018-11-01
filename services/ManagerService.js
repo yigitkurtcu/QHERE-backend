@@ -51,8 +51,8 @@ ManagerService.ApproveStudents=(req)=>{ //Her hoca sadece kendi sınıfına ekle
                 Class.find({_id:req.params.id}).then(collection=>{
                     const studentId=collection[0].students.find(student=> student.userId == id)
                     if(!studentId){
-                        var user = { userId: instance[0]._id, fullName: instance[0].fullName, email: instance[0].email, schoolNumber: instance[0].schoolNumber };
-                        Class.findOneAndUpdate({ _id: req.params.id}, { $push:{"students": user}},{new: true}).then((updateClass)=>{
+                        var newUser = { userId: instance[0]._id, fullName: instance[0].fullName, email: instance[0].email, schoolNumber: instance[0].schoolNumber };
+                        Class.findOneAndUpdate({ _id: req.params.id}, { $push:{"students": newUser}},{new: true}).then((updateClass)=>{
                             if(collection[0].students.length==collection[0].quota){
                                 return reject(ManagerError.BadRequest())
                             }else{

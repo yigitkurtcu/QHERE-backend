@@ -15,7 +15,7 @@ UserService.login = (req) => {
             }else{
                 bcrypt.compare(req.body.password,userInstance.password, function(err, res) {
                     if(res==true){
-                        TokenService.generateToken(req.body).then(function (token) {
+                        TokenService.generateToken(userInstance).then(function (token) {
                             userInstance = userInstance.toObject();
                             let response = {
                                 userType: userInstance.userType,
@@ -52,6 +52,8 @@ UserService.register = (req) => {
         if(User.findOne({email: req.body.email}).then((userInstance) => {
             if(userInstance) 
                 return reject(UserError.EmailExist());
+
+            //if(schoolNumber exist reject)
             
             const {schoolNumber,fullName,email,password,gender}=req.body;
             
