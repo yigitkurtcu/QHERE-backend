@@ -10,27 +10,32 @@ ManagerService={};
 ManagerService.createClass=(req)=>{
     return new Promise ((resolve,reject)=>{
         TokenService.verifyToken(req.headers.authorization)
-        .then((userId)=>{
+        .then((token)=>{
             TokenService.verifyManager(req.headers.authorization)
             .then(() => {
-                const {className,joinTime,quota,discontinuity,description,managerName}=req.body;
-
-                let createClass=Class({
-                    managerId: userId,
-                    className,
-                    joinTime,
-                    quota,
-                    discontinuity,
-                    description,
-                    managerName
+                User.find({_id:token.userId})
+                .then((userInstance)=>{
+                    const {className,joinTime,quota,discontinuity,description}=req.body;
+                    console.log(userInstance[0].fullName)
+                    let createClass=Class({
+                        managerId: token.userId,
+                        className,
+                        joinTime,
+                        quota,
+                        discontinuity,
+                        description,
+                        managerName:userInstance[0].fullName
+                    })
+                    createClass.save()
+                    .then(classInstance => {
+                        return resolve(classInstance);
+                    }).catch(err => {
+                        return reject(ManagerError.BusinessException()); 
+                    })
+                    return resolve(createClass);
+                }).catch((err)=>{
+                    return reject(ManagerError.BusinessException())
                 })
-                createClass.save()
-                .then(classInstance => {
-                    return resolve(classInstance);
-                }).catch(err => {
-                    return reject(ManagerError.BusinessException()); 
-                })
-                return resolve(createClass);
             }).catch(err => {
                 return reject(AuthError.NotAllowed());
             })
@@ -88,10 +93,10 @@ ManagerService.RejectStudents=(req)=>{
 ManagerService.getClasses=(req)=>{
     return new Promise((resolve,reject)=>{
         TokenService.verifyToken(req.headers.authorization)
-        .then((userId)=>{
+        .then((token)=>{
             TokenService.verifyManager(req.headers.authorization)
             .then(() => {
-                Class.find({managerId:userId}).then((classes)=>{
+                Class.find({managerId:token.userId}).then((classes)=>{
                     return resolve (classes)
                 }).catch((err)=>{
                     return reject (ManagerError.BadRequest())
@@ -101,6 +106,16 @@ ManagerService.getClasses=(req)=>{
             })
         }).catch((err)=>{
             return reject (ManagerError.BadRequest())
+        })
+    })
+}
+
+ManagerService.getClassInfo=(req)=>{
+    return new Promise((resolve,reject)=>{
+        Class.find({_id:req.params.id}).then((classInstance)=>{
+           return resolve(classInstance)
+        }).catch((err)=>{
+            return reject(ManagerError.BadRequest())
         })
     })
 }
