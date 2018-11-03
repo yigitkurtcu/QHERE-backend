@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const Class =require('../models/Class')
 const User =require('../models/Users')
+const ClassesRequest=require('../models/ClassRequest')
 const TokenService = require('./TokenService');
 const ManagerError=require('../errors/ManagerError');
 const AuthError=require('../errors/AuthError');
@@ -114,6 +115,24 @@ ManagerService.getClassInfo=(req)=>{
     return new Promise((resolve,reject)=>{
         Class.find({_id:req.params.id}).then((classInstance)=>{
            return resolve(classInstance)
+        }).catch((err)=>{
+            return reject(ManagerError.BadRequest())
+        })
+    })
+}
+
+ManagerService.getClassesRequest=(req)=>{
+    return new Promise((resolve,reject)=>{
+        TokenService.verifyToken(req.headers.authorization)
+        .then((token)=>{
+            TokenService.verifyManager(req.headers.authorization)
+            .then(() => {
+                ClassesRequest.find({managerId:token.userId}).then((students)=>{
+                    return resolve (students)
+                })
+            }).catch((err)=>{
+                return reject(ManagerError.BadRequest())
+            })
         }).catch((err)=>{
             return reject(ManagerError.BadRequest())
         })

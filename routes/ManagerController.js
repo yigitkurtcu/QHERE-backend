@@ -21,6 +21,14 @@ router.get('/getClasses',function (req,res,next) {
     })
 })
 
+router.get('/getClassesRequest',function (req,res,next) {  
+    ManagerService.getClassesRequest(req).then((result)=>{
+        respond.success(res,result);
+    }).catch((err)=>{
+        respond.withError(res,err)
+    })
+})
+
 
 router.put('/:id/approveStudent',function(req,res,next){
     ManagerService.ApproveStudents(req).then((result)=>{

@@ -40,7 +40,9 @@ studentService.joinClass = (req) => {
             .then(userInstance => {
                 Class.findOne({_id: req.params.id})
                 .then(classInstance => {
+                    console.log(classInstance)
                     var classReq = new ClassRequest({
+                        'managerId':classInstance.managerId,
                         'managerName': classInstance.managerName,
                         'classId': req.params.id,
                         'className': classInstance.className,

@@ -1,6 +1,10 @@
 var mongoose=require('mongoose');
 
  var classRequestSchema=mongoose.Schema({
+    managerId:{
+        type:String,
+        required:true
+    },
     managerName:{
         type:String,
         required:true
