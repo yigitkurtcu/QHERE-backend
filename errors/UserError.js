@@ -24,11 +24,11 @@ UserError.WrongPassword = () => {
     }
 };
 
-UserError.EmailExist = () => {
+UserError.UserExist = () => {
     return {
         status_code: 404, 
-        name : 'EmailExist',
-        message: 'Email is already registered.'
+        name : 'EmailorSchoolNumberExist',
+        message: 'Email or school number is already registered.'
     }
 };
 

@@ -49,11 +49,10 @@ UserService.login = (req) => {
 UserService.register = (req) => {
 
     return new Promise((resolve,reject) => {
-        if(User.findOne({email: req.body.email}).then((userInstance) => {
+        
+        if(User.findOne({$or:[ {email:req.body.email}, {schoolNumber: req.body.schoolNumber} ]}).then((userInstance) => {
             if(userInstance) 
-                return reject(UserError.EmailExist());
-
-            //if(schoolNumber exist reject)
+                return reject(UserError.UserExist());
             
             const {schoolNumber,fullName,email,password,gender}=req.body;
             

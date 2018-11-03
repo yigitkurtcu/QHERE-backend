@@ -13,7 +13,7 @@ ManagerService.createClass=(req)=>{
         .then((token)=>{
             TokenService.verifyManager(req.headers.authorization)
             .then(() => {
-                User.find({_id:token.userId})
+                User.find({_id:token.userId})// findOne ile query atılırsa [0] a gerek kalmaz.
                 .then((userInstance)=>{
                     const {className,joinTime,quota,discontinuity,description}=req.body;
                     console.log(userInstance[0].fullName)
