@@ -21,4 +21,12 @@ router.get('/getUserClasses', verifier.verifyToken, function(req,res,next){
     });
 });
 
+router.post('/:id/joinClass', verifier.verifyToken, function(req,res,next){
+    StudentService.joinClass(req).then((result)=>{
+        respond.success(res,result);
+    }).catch((err)=>{
+        respond.withError(res,err);
+    });
+});
+
 module.exports = router;

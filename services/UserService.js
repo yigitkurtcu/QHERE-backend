@@ -67,7 +67,7 @@ UserService.register = (req) => {
                     });
                     user.save()
                     .then(userInstance => {
-                        return resolve(user);
+                        return resolve(userInstance);
                     }).catch(err => {
                         return reject(UserError.BusinessException()); 
                     })
