@@ -1,10 +1,15 @@
 const bcrypt =require('bcryptjs');
+const randomstring = require('randomstring');
+
 const UserError = require('../errors/UserError');
 const TokenService = require('./TokenService');
 const MailService=require('./MailService');
 const User=require('../models/Users')
 const Token=require('../models/Token')
+const ForgotCode=require('../models/ForgotCode')
 const AuthError = require('../errors/AuthError');
+const ObjectId = require('mongoose').Types.ObjectId; 
+
 const UserService = {};
 
 UserService.login = (req) => {
@@ -94,22 +99,29 @@ UserService.logout=(req)=>{
     })
 }
 
-UserService.forgot=(req)=>{
+UserService.forgot=(req)=>{//Kodu dbde olan kullanıcıya aynı kod tekrar gönderilsin db dolmasın TO-DO
     return new Promise((resolve,reject)=>{
         User.findOne({email:req.body.email}).then((userInstance)=>{
+            if(!userInstance)
+                return reject (UserError.UserNotFound())
             let user={
                 _id:userInstance._id,
                 email:userInstance.email
             }
-            if(user !== null){
-                MailService.getMail(user).then((res)=>{
+            var code = randomstring.generate(7)
+            var forgot = new ForgotCode({
+                email: req.body.email,
+                code
+            })
+            forgot.save().then(() => {
+                MailService.getMail(user, code).then((res)=>{
                     return resolve(res)
                 }).catch((err)=>{
                     return reject(err)
                 })
-            }else{
-                return reject (UserError.BusinessException())
-            }         
+            }).catch(err => {
+                return reject(err)
+            })
         }).catch((err)=>{
             return reject(err)
         })
@@ -119,23 +131,28 @@ UserService.forgot=(req)=>{
 
 UserService.resetPassword=(req)=>{
     return new Promise((resolve,reject)=>{
-        User.find({_id:req.body._id}).then((userInstance)=>{
-            if(userInstance){
+        ForgotCode.findOne({code: req.body.code}).then(codeInstance => {
+            if(!codeInstance)
+                return reject (UserError.CodeNotValid())
+            User.findOne({email: codeInstance.email}).then((userInstance)=>{
                 bcrypt.hash(req.body.newPassword,10).then(hashPassword=>{
                     let newPassword=hashPassword
-                    User.findOneAndUpdate({_id:req.body._id},{$set:{password:newPassword}},{new: true}).then((userInstance)=>{
-                        return resolve (userInstance)
+                    User.findOneAndUpdate({_id: new ObjectId(userInstance._id)},{$set:{password:newPassword}},{new: true}).then((newUser)=>{
+                        ForgotCode.deleteOne({ code: req.body.code }).then(() => {
+                            return resolve(newUser)
+                        }).catch((err)=>{
+                            return reject (UserError.BusinessException(err))
+                        })
                     }).catch((err)=>{
-                        return reject (UserError.BusinessException())
+                        return reject (UserError.BusinessException(err))
                     })
-
                 }).catch((err)=>{
                     return reject(err);
                 })
-            }
-            
-        }).catch((err)=>{
-            console.log(err);
+            }).catch((err)=>{
+            })
+        }).catch(err => {
+            return reject(err);
         })
     })
 }

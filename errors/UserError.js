@@ -16,6 +16,14 @@ UserError.UserNotFound = () => {
     }
 };
 
+UserError.CodeNotValid = () => {
+    return {
+        status_code: 406, 
+        name : 'CodeNotValid',
+        message: 'Code is not valid.'
+    }
+};
+
 UserError.WrongPassword = () => {
     return {
         status_code: 400, 

@@ -2,14 +2,14 @@ const nodemailer = require('nodemailer');
 const MailService = {};
 
 
-MailService.getMail=(req)=>{
+MailService.getMail=(userInstance, code)=>{
     return new Promise((resolve,reject)=>{
 
-        console.log(req.email)
+        console.log(userInstance + ' ' + code)
 
         let user = 'qheredeneme@gmail.com';
         let pass = 'MetYi2018';
-        let to = req.email;
+        let to = userInstance.email;
         let subject = 'QHERE şifre yenileme talebi';
         
         let transporter = nodemailer.createTransport({
@@ -24,8 +24,9 @@ MailService.getMail=(req)=>{
             from: user,
             to: to,
             subject: subject,
-            html:  "<b>QHERE şifrenizi değiştirmek için linke tıklayınız</b>"+" "+
-            "<a href=http://localhost:3000/PasswordChangeForm/"+req._id+">http://localhost:3000/PasswordChangeForm/"+req._id+"</a>"
+            html:  "<b>QHERE şifrenizi yenilemek için kodunuz: "+ code + "</b><br>"+" "+
+            "<b>Şifrenizi yenilemek için linke tıklayınız</b>"+" "+
+            "<a href=http://localhost:3000/PasswordChangeForm/>http://localhost:3000/PasswordChangeForm/</a>"// Webde de aktivasyon koduyla gelsin mobildede webi ona göre düzeltirsin
         };
     
         transporter.sendMail(mailOptions, function (error, info) {
