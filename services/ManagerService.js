@@ -17,7 +17,6 @@ ManagerService.createClass=(req)=>{
                 User.find({_id:token.userId})// findOne ile query atılırsa [0] a gerek kalmaz.
                 .then((userInstance)=>{
                     const {className,joinTime,quota,discontinuity,description}=req.body;
-                    console.log(userInstance[0].fullName)
                     let createClass=Class({
                         managerId: token.userId,
                         className,

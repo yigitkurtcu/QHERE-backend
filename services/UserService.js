@@ -26,7 +26,6 @@ UserService.login = (req) => {
                                 userType: userInstance.userType,
                                 token: token
                             };
-                            console.log(userInstance);
                             let TokenSave=Token({
                                 userId:userInstance._id,
                                 userType: userInstance.userType,

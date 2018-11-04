@@ -4,9 +4,6 @@ const MailService = {};
 
 MailService.getMail=(userInstance, code)=>{
     return new Promise((resolve,reject)=>{
-
-        console.log(userInstance + ' ' + code)
-
         let user = 'qheredeneme@gmail.com';
         let pass = 'MetYi2018';
         let to = userInstance.email;
