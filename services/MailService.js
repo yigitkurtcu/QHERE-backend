@@ -21,9 +21,7 @@ MailService.getMail=(userInstance, code)=>{
             from: user,
             to: to,
             subject: subject,
-            html:  "<b>QHERE şifrenizi yenilemek için kodunuz: "+ code + "</b><br>"+" "+
-            "<b>Şifrenizi yenilemek için linke tıklayınız</b>"+" "+
-            "<a href=http://localhost:3000/PasswordChangeForm/>http://localhost:3000/PasswordChangeForm/</a>"// Webde de aktivasyon koduyla gelsin mobildede webi ona göre düzeltirsin
+            html:  "<b>QHERE şifrenizi yenilemek için kodunuz: "+ code + "</b>"
         };
     
         transporter.sendMail(mailOptions, function (error, info) {
