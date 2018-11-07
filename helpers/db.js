@@ -1,7 +1,8 @@
 const mongoose =require('mongoose');
+const config=require('../config');
 
 module.exports=()=>{
-    mongoose.connect('mongodb://qhere:MY1234@ds125693.mlab.com:25693/qhere-database',{ useNewUrlParser: true });
+    mongoose.connect(config.dbUrl,{ useNewUrlParser: true });
     mongoose.connection.on('open',()=>{
         console.log('MongoDB connected');
     })

@@ -1,11 +1,12 @@
 const nodemailer = require('nodemailer');
+const config=require('../config');
 const MailService = {};
 
 
 MailService.getMail=(userInstance, code)=>{
     return new Promise((resolve,reject)=>{
-        let user = 'qheredeneme@gmail.com';
-        let pass = 'MetYi2018';
+        let user = config.user
+        let pass = config.pass
         let to = userInstance.email;
         let subject = 'QHERE şifre yenileme talebi';
         
