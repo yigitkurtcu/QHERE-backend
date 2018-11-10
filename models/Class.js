@@ -29,9 +29,9 @@ var classSchema = mongoose.Schema({
         type:String,
     },
     students:[{
-        userId: String,
-        fullName: String,
-        email: String,
+        studentId: String,
+        studentName: String,
+        email:String,
         schoolNumber: Number
     }]
 });

@@ -12,7 +12,7 @@ ManagerError.BadRequest = () => {
     return {
         status_code: 400, 
         name : 'Bad Request',
-        message: 'Bu Ders Kotası Dolu'
+        message: 'Bu Dersin Kotası Dolu'
     }
 };
 
