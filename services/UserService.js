@@ -72,7 +72,6 @@ UserService.register = (req) => {
                     .then(userInstance => {
                         return resolve(userInstance);
                     }).catch(err => {
-                        console.log("aa")
                         return reject(UserError.BusinessException()); 
                     })
                 }).catch((err)=>{

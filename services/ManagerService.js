@@ -52,11 +52,11 @@ ManagerService.ApproveStudents=(req)=>{
     return new Promise ((resolve,reject)=>{
         TokenService.verifyToken(req.headers.authorization).then((userId)=>{
             TokenService.verifyManager(req.headers.authorization).then((managerId)=>{
-                User.find({schoolNumber:userId.schoolNumber}).then((instance)=>{
+                User.find({_id:req.params.id}).then((instance)=>{
                     ClassesRequest.find({studentId:req.params.id}).then((approveStudent)=>{
                         if(approveStudent.length!==0){
                             Class.find({_id:approveStudent[0].classId}).then((classInstance)=>{
-                                const studentId=classInstance[0].students.find(studentId=>studentId.studentId===req.params.id)
+                                const studentId=classInstance[0].students.find(studentId=>studentId.studentId==req.params.id.toString())
                                 if(!studentId)
                                 {
                                     Class.findOneAndUpdate({_id:approveStudent[0].classId},{$push:{
@@ -79,7 +79,9 @@ ManagerService.ApproveStudents=(req)=>{
                                         return reject(err)
                                     })
                                 }else{
-                                    return reject(ManagerError.NotAcceptable());
+                                    ClassesRequest.findOneAndDelete({studentId:req.params.id}).then(()=>{
+                                        return reject(ManagerError.NotAcceptable());
+                                    })
                                 }
                             })
                         }else{
