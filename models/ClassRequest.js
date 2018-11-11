@@ -1,34 +1,38 @@
-var mongoose=require('mongoose');
+var mongoose = require('mongoose');
 
- var classRequestSchema=mongoose.Schema({
-    managerId:{
-        type:String,
-        required:true
+var classRequestSchema = mongoose.Schema({
+    managerId: {
+        type: String,
+        required: true
     },
-    managerName:{
-        type:String,
-        required:true
+    managerName: {
+        type: String,
+        required: true
     },
-    classId:{
-        type:String,
+    classId: {
+        type: String,
         required: true,
     },
-    className:{
-        type:String,
+    className: {
+        type: String,
         required: true,
     },
-    studentId:{
-        type:String,
+    studentId: {
+        type: String,
         required: true,
     },
-    studentName:{
-        type:String,
-        required:true
+    studentName: {
+        type: String,
+        required: true
     },
-    requestDate:{
-        type:Date,
+    studentNumber: {
+        type: Number,
+        required: true
+    },
+    requestDate: {
+        type: Date,
         required: true,
     }
- })
+})
 
- module.exports=mongoose.model('classRequest',classRequestSchema)
+module.exports = mongoose.model('classRequest', classRequestSchema)
