@@ -8,7 +8,7 @@ ManagerService = {};
 
 ManagerService.createClass = req => {
   return new Promise((resolve, reject) => {
-    User.find({ _id: req.tokenData.userId }) // findOne ile query atılırsa [0] a gerek kalmaz.
+    User.findOne({ _id: req.tokenData.userId })
       .then(userInstance => {
         const {
           className,
@@ -24,7 +24,7 @@ ManagerService.createClass = req => {
           quota,
           discontinuity,
           description,
-          managerName: userInstance[0].fullName
+          managerName: userInstance.fullName
         });
         createClass.save()
         .then(classInstance => {
@@ -40,30 +40,30 @@ ManagerService.createClass = req => {
   });
 };
 
-ManagerService.ApproveStudents = (req) => {
+ManagerService.approveStudents = (req) => {
   return new Promise((resolve, reject) => {
-    User.find({ _id: req.params.id }).then((instance) => {
-      ClassesRequest.find({ studentId: req.params.id }).then((approveStudent) => {
-        if (approveStudent.length == 0)
+    User.findOne({ _id: req.params.id }).then((instance) => {
+      ClassesRequest.findOne({ studentId: req.params.id }).then((approveStudent) => {
+        if (approveStudent === null)
           return reject("ClassRequestte istek yok");
 
-        Class.find({ _id: approveStudent[0].classId }).then((classInstance) => {
-          const studentId = classInstance[0].students.find(studentId => studentId.studentId == req.params.id.toString())
+        Class.findOne({ _id: approveStudent.classId }).then((classInstance) => {
+          const studentId = classInstance.students.find(student => student.userId === req.params.id)
           if (!studentId) {
-            Class.findOneAndUpdate({ _id: approveStudent[0].classId }, {
+            Class.findOneAndUpdate({ _id: approveStudent.classId }, {
               $push: {
                 students: {
                   $each: [{
-                    "studentId": instance[0]._id,
-                    "studentName": instance[0].fullName,
-                    "schoolNumber": instance[0].schoolNumber,
-                    "email": instance[0].email
+                    "userId": instance._id,
+                    "fullName": instance.fullName,
+                    "schoolNumber": instance.schoolNumber,
+                    "email": instance.email
                   }],
-                  $slice: classInstance[0].quota
+                  $slice: classInstance.quota
                 }
               }
             }, { new: true }).then((instance) => {
-              if (classInstance[0].students.length == classInstance[0].quota)
+              if (classInstance.students.length == classInstance.quota)
                 return reject(ManagerError.BadRequest())
 
               ClassesRequest.findOneAndDelete({ studentId: req.params.id }).then(() => {
@@ -92,22 +92,12 @@ ManagerService.ApproveStudents = (req) => {
   })
 }
 
-ManagerService.RejectStudents = (req) => {
+ManagerService.rejectStudents = (req) => {
   return new Promise((resolve, reject) => {
     ClassesRequest.findOneAndDelete({ studentId: req.params.id }).then((rejectStudent) => {
       return resolve(rejectStudent)
     }).catch(err => {
       return reject(SystemError.BusinessException(err));
-    });
-  });
-};
-
-ManagerService.RejectStudents = req => {
-  return new Promise((resolve, reject) => {
-    Class.find({ _id: req.params.id }).then(classInstance => {
-      let instance =
-        classInstance[0].className + " sınıfına yaptığınız istek reddedildi."; //!!Hocanın servisi öğrenci bu mesajı göremez.
-      return resolve(instance);
     });
   });
 };
@@ -148,5 +138,28 @@ ManagerService.getClassesRequest = req => {
 
   });
 };
+
+ManagerService.deleteClass=(req)=>{
+    return new Promise((resolve,reject)=>{
+        Class.findOneAndDelete({_id:req.params.id}).then((classInstance)=>{
+                    return resolve(classInstance)
+        })
+        .catch((err)=>{
+            return reject (ManagerError.BadRequest())
+        })
+    })
+}
+
+ManagerService.editClass=(req)=>{
+    return new Promise((resolve,reject)=>{
+        Class.findOneAndUpdate({_id:req.params.id},req.body,{ new: true }).then((instance)=>{
+                    console.log(instance)
+                    return resolve(instance);
+        })
+        .catch((err)=>{
+                return reject (ManagerError.BadRequest())
+        })
+    })
+}
 
 module.exports = ManagerService;

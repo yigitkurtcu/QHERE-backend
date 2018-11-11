@@ -70,6 +70,7 @@ studentService.joinClass = req => {
                   'className': classInstance.className,
                   'studentId': req.tokenData.userId,
                   'studentName': userInstance.fullName,
+                  'studentNumber':req.tokenData.schoolNumber,
                   'requestDate': moment().toDate()
                 });
                 classReq.save()
