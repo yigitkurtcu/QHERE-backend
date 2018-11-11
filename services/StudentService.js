@@ -64,39 +64,30 @@ studentService.joinClass = req => {
               })
               .then(classInstance => {
                 var classReq = new ClassRequest({
-                  managerId: classInstance.managerId,
-                  managerName: classInstance.managerName,
-                  classId: req.params.id,
-                  className: classInstance.className,
-                  studentId: req.tokenData.userId,
-                  studentName: userInstance.fullName,
-                  studentNumber: userInstance.schoolNumber,
-                  requestDate: moment().toDate()
+                  'managerId': classInstance.managerId,
+                  'managerName': classInstance.managerName,
+                  'classId': req.params.id,
+                  'className': classInstance.className,
+                  'studentId': req.tokenData.userId,
+                  'studentName': userInstance.fullName,
+                  'requestDate': moment().toDate()
                 });
-                classReq
-                  .save()
+                classReq.save()
                   .then(instance => {
                     return resolve(instance);
+                  }).catch(err => {
+                    return reject(SystemError.BusinessException(err));
                   })
-                  .catch(err => {
-                    console.log(err);
-                    return reject(err);
-                  });
+              }).catch(err => {
+                return reject(SystemError.BusinessException(err));
               })
-              .catch(err => {
-                console.log(err);
-                return reject(err);
-              });
+          }).catch(err => {
+            return reject(SystemError.BusinessException(err));
           })
-          .catch(err => {
-            console.log(err);
-            return reject(err);
-          });
+      }).catch(err => {
+        return reject(SystemError.BusinessException(err));
       })
-      .catch(err => {
-        return reject(err);
-      });
-  });
+  })
 };
 
 module.exports = studentService;

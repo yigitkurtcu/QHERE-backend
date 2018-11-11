@@ -31,7 +31,7 @@ router.get('/getClassesRequest', [verifier.verifyToken, verifier.verifyManager],
 })
 
 
-router.put('/:id/approveStudent', function (req, res, next) {
+router.put('/:id/approveStudent', [verifier.verifyToken, verifier.verifyManager], function (req, res, next) {
     ManagerService.ApproveStudents(req).then((result) => {
         respond.success(res, result);
     }).catch((err) => {
@@ -39,7 +39,7 @@ router.put('/:id/approveStudent', function (req, res, next) {
     });
 });
 
-router.get('/:id/rejectStudent', function (req, res, next) {
+router.get('/:id/rejectStudent', [verifier.verifyToken, verifier.verifyManager], function (req, res, next) {
     ManagerService.RejectStudents(req).then((result) => {
         respond.success(res, result);
     }).catch((err) => {
@@ -47,7 +47,7 @@ router.get('/:id/rejectStudent', function (req, res, next) {
     })
 })
 
-router.get('/class/:id/info', function (req, res, next) {
+router.get('/class/:id/info', [verifier.verifyToken, verifier.verifyManager], function (req, res, next) {
     ManagerService.getClassInfo(req).then((result) => {
         respond.success(res, result);
     }).catch((err) => {

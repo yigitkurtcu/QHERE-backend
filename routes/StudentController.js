@@ -5,7 +5,7 @@ const verifier = require("./../helpers/verifier");
 
 const StudentService = require("../services/StudentService.js");
 
-router.get("/getClasses", function(req, res, next) {
+router.get("/getClasses", verifier.verifyToken, function(req, res, next) {
   StudentService.getClasses(req)
     .then(result => {
       respond.success(res, result);

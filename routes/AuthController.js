@@ -1,15 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const respond = require('../helpers/respond');
+const verifier = require('../helpers/verifier');
 const TokenService = require('../services/TokenService.js');
 
-router.get('/verifyToken', function (req, res, next) {
-    TokenService.verifyToken(req.headers.authorization).then((result) => {
-        req.tokenData = result;
-        respond.success(res, result);
-    }).catch((err) => {
-        respond.withError(res, err);
-    });
+router.get('/verifyToken', verifier.verifyToken, function (req, res, next) {
+    respond.success(res);
 });
 
 module.exports = router;

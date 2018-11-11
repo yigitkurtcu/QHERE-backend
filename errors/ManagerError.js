@@ -4,7 +4,7 @@ ManagerError.NotAcceptable = () => {
     return {
         status_code: 406, 
         name : 'Not Acceptable',
-        message: 'Bu Derse Kayıtlısınız'
+        message: 'Bu Derse Kayıtlı'
     }
 };
 
@@ -12,7 +12,7 @@ ManagerError.BadRequest = () => {
     return {
         status_code: 400, 
         name : 'Bad Request',
-        message: 'Bu Ders Kotası Dolu'
+        message: 'Bu Dersin Kotası Dolu'
     }
 };
 

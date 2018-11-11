@@ -13,7 +13,7 @@ var classSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  joinTime: {
+  lastJoinTime: {
     type: Date,
     required: true
   },
@@ -28,13 +28,11 @@ var classSchema = mongoose.Schema({
   description: {
     type: String
   },
-  students: [
-    {
-      userId: String,
-      fullName: String,
-      email: String,
-      schoolNumber: Number
-    }
-  ]
+  students: [{
+    userId: String,
+    fullName: String,
+    email: String,
+    schoolNumber: Number
+  }]
 });
 module.exports = mongoose.model("Class", classSchema);
