@@ -88,16 +88,16 @@ ManagerService.ApproveStudents=(req)=>{
                             return reject("ClassRequestte istek yok");
                         }
                     }).catch((err)=>{
-                        console.log(err)
+                        return reject(ManagerError.BusinessException())
                     })
                 }).catch((err)=>{
-                    console.log(err)
+                    return reject(ManagerError.BusinessException())
                 })
             }).catch((err)=>{
-                return reject(err)
+                return reject(ManagerError.BusinessException())
             })
         }).catch((err)=>{
-            return reject(err)
+            return reject(ManagerError.BusinessException())
         })
     })
 }
@@ -106,7 +106,7 @@ ManagerService.RejectStudents=(req)=>{
     return new Promise((resolve,reject)=>{
         TokenService.verifyToken(req.headers.authorization).then((userId)=>{
             TokenService.verifyManager(req.headers.authorization).then((managerId)=>{
-                console.log(req.params.id)
+                
                 ClassesRequest.findOneAndDelete({studentId:req.params.id}).then((rejectStudent)=>{
                     return resolve(rejectStudent)
                 }).catch((err)=>{

@@ -23,7 +23,6 @@ studentService.getUserClasses = (req) => {
             var result = res.map(x => _.pick(x, ['_id', 'managerId', 'className','joinTime','quota', 'discontinuity', 'description', 'managerName']));
             return resolve(result);
         }).catch(err => {
-            console.log(err)
             return reject(SystemError.BusinessException(err));
         })
     })
@@ -53,19 +52,16 @@ studentService.joinClass = (req) => {
                     .then(instance => {
                         return resolve(instance);
                     }).catch(err => {
-                        console.log(err)
-                        return reject(err);
+                        return reject(SystemError.BusinessException(err));
                     })
                 }).catch(err => {
-                    console.log(err)
-                    return reject(err);
+                    return reject(SystemError.BusinessException(err));
                 })
             }).catch(err => {
-                console.log(err)
-                return reject(err);
+                return reject(SystemError.BusinessException(err));
             })
         }).catch(err => {
-            return reject(err);
+            return reject(SystemError.BusinessException(err));
         })
     })
 };

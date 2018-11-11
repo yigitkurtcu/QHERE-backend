@@ -4,7 +4,7 @@ ManagerError.NotAcceptable = () => {
     return {
         status_code: 406, 
         name : 'Not Acceptable',
-        message: 'Bu Derse Kayıtlısınız'
+        message: 'Bu Derse Kayıtlı'
     }
 };
 

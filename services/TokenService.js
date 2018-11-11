@@ -39,7 +39,6 @@ tokenService.verifyToken=function(instance){
             }
             return resolve(tokenData);
         }).catch(err => {
-            console.log(err)
             return reject(AuthError.WrongToken());
         })
     });
