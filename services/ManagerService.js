@@ -49,7 +49,7 @@ ManagerService.ApproveStudents = (req) => {
 
         Class.find({ _id: approveStudent[0].classId }).then((classInstance) => {
           const studentId = classInstance[0].students.find(studentId => studentId.studentId == req.params.id.toString())
-          if (!studentId) {
+          if (!studentId) { // Gerek varmı?
             Class.findOneAndUpdate({ _id: approveStudent[0].classId }, {
               $push: {
                 students: {
