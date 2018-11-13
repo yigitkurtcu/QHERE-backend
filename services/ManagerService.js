@@ -54,7 +54,7 @@ ManagerService.approveStudents = (req) => {
             ClassesRequest.findOneAndDelete({ _id: req.params.id }).then(() => {
               return reject(ManagerError.NotAcceptable());
             })  
-          }
+          }else{
             Class.findOneAndUpdate({ _id: approveStudent.classId }, {
               $push: {
                 students: {
@@ -79,6 +79,7 @@ ManagerService.approveStudents = (req) => {
             }).catch((err) => {
               return reject(err)
             })
+          }
         }).catch((err) => {
           return reject(ManagerError.BusinessException(err))
         })
@@ -93,7 +94,7 @@ ManagerService.approveStudents = (req) => {
 
 ManagerService.rejectStudents = (req) => {
   return new Promise((resolve, reject) => {
-    ClassesRequest.findOneAndDelete({ studentId: req.params.id }).then((rejectStudent) => {
+    ClassesRequest.findOneAndDelete({ _id: req.params.id }).then((rejectStudent) => {
       return resolve(rejectStudent)
     }).catch(err => {
       return reject(SystemError.BusinessException(err));
