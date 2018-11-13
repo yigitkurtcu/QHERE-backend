@@ -42,14 +42,19 @@ ManagerService.createClass = req => {
 
 ManagerService.approveStudents = (req) => {
   return new Promise((resolve, reject) => {
-    User.findOne({ _id: req.params.id }).then((instance) => {
-      ClassesRequest.findOne({ studentId: req.params.id }).then((approveStudent) => {
-        if (approveStudent === null)
-          return reject("ClassRequestte istek yok");
-
+    console.log('a',req.params)
+    ClassesRequest.findOne({ _id: req.params.id }).then((approveStudent) => {
+      if (approveStudent === null)
+        return reject("ClassRequestte istek yok");
+        
+      User.findOne({ _id: approveStudent.studentId }).then((instance) => {
         Class.findOne({ _id: approveStudent.classId }).then((classInstance) => {
-          const studentId = classInstance.students.find(student => student.userId === req.params.id)
-          if (!studentId) {
+          const studentId = classInstance.students.find(student => student.userId === approveStudent.studentId)
+          if (studentId) {
+            ClassesRequest.findOneAndDelete({ _id: req.params.id }).then(() => {
+              return reject(ManagerError.NotAcceptable());
+            })  
+          }
             Class.findOneAndUpdate({ _id: approveStudent.classId }, {
               $push: {
                 students: {
@@ -66,28 +71,22 @@ ManagerService.approveStudents = (req) => {
               if (classInstance.students.length == classInstance.quota)
                 return reject(ManagerError.BadRequest())
 
-              ClassesRequest.findOneAndDelete({ studentId: req.params.id }).then(() => {
+              ClassesRequest.findOneAndDelete({ _id: req.params.id }).then(() => {
                 return resolve(instance);
               }).catch((err) => {
                 return reject(ManagerError.BusinessException())
               })
-
             }).catch((err) => {
               return reject(err)
             })
-          } else {
-            ClassesRequest.findOneAndDelete({ studentId: req.params.id }).then(() => {
-              return reject(ManagerError.NotAcceptable());
-            })
-          }
         }).catch((err) => {
-          return reject(ManagerError.BusinessException())
+          return reject(ManagerError.BusinessException(err))
         })
       }).catch((err) => {
-        return reject(ManagerError.BusinessException())
+        return reject(ManagerError.BusinessException(err))
       })
     }).catch((err) => {
-      return reject(ManagerError.BusinessException())
+      return reject(ManagerError.BusinessException(err))
     })
   })
 }
