@@ -17,22 +17,28 @@ ManagerService.createClass = req => {
           discontinuity,
           description
         } = req.body;
-        let createClass = Class({
-          managerId: req.tokenData.userId,
-          className,
-          lastJoinTime,
-          quota,
-          discontinuity,
-          description,
-          managerName: userInstance.fullName
-        });
-        createClass.save()
-        .then(classInstance => {
-          return resolve(classInstance);
-        })
-        .catch(err => {
-          return reject(ManagerError.BusinessException());
-        });
+        Class.findOneAndUpdate({_id:req.body._id},req.body,{new:true}).then((instance)=>{
+            if(instance)
+              return resolve (instance)
+            let createClass = Class({
+              managerId: req.tokenData.userId,
+              className,
+              lastJoinTime,
+              quota,
+              discontinuity,
+              description,
+              managerName: userInstance.fullName
+            });
+            createClass.save()
+            .then(classInstance => {
+              return resolve(classInstance);
+            })
+            .catch(err => {
+              return reject(ManagerError.BusinessException());
+            });
+      }).catch((err)=>{
+        return reject(ManagerError.BusinessException());
+      })
       })
       .catch(err => {
         return reject(ManagerError.BusinessException());
@@ -42,7 +48,6 @@ ManagerService.createClass = req => {
 
 ManagerService.approveStudents = (req) => {
   return new Promise((resolve, reject) => {
-    console.log('a',req.params)
     ClassesRequest.findOne({ _id: req.params.id }).then((approveStudent) => {
       if (approveStudent === null)
         return reject("ClassRequestte istek yok");
