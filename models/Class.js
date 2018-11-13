@@ -33,6 +33,18 @@ var classSchema = mongoose.Schema({
     fullName: String,
     email: String,
     schoolNumber: Number
+  }],
+  qheres: [{
+    number: {
+      type: Number,
+      required: true
+    },
+    students: [{
+      userId: String,
+      fullName: String,
+      email: String,
+      schoolNumber: Number
+    }]
   }]
 });
 module.exports = mongoose.model("Class", classSchema);
