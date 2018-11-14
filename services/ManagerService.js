@@ -158,13 +158,30 @@ ManagerService.deleteClass=(req)=>{
 ManagerService.editClass=(req)=>{
     return new Promise((resolve,reject)=>{
         Class.findOneAndUpdate({_id:req.params.id},req.body,{ new: true }).then((instance)=>{
-                    console.log(instance)
-                    return resolve(instance);
+                return resolve(instance);
         })
         .catch((err)=>{
                 return reject (ManagerError.BadRequest())
         })
     })
+}
+
+ManagerService.createQr=(req)=>{
+  return new Promise((resolve,reject)=>{
+      console.log(req.body);
+      Class.findOne({_id:req.body.classId}).then((instance)=>{
+        if(instance.qheres.length==15)
+            return reject (ManagerError.BadRequest());
+
+        Class.findOneAndUpdate({_id:req.body.classId},{$push:{qheres:{"number":instance.qheres.length+1}}},{new:true}).then((updateInstance)=>{
+          return resolve(updateInstance)
+        }).catch((err)=>{
+          return reject(SystemError.BusinessException(err))
+        })
+      }).catch((err)=>{
+          return reject(SystemError.BusinessException(err));
+      })
+  })
 }
 
 module.exports = ManagerService;

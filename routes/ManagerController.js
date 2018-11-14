@@ -43,7 +43,7 @@ router.get('/:id/rejectStudent', [verifier.verifyToken, verifier.verifyManager],
     ManagerService.rejectStudents(req).then((result) => {
         respond.success(res, result);
     }).catch((err) => {
-        respond.withError(res.err);
+        respond.withError(res,err);
     })
 })
 
@@ -51,7 +51,7 @@ router.get('/class/:id/info', [verifier.verifyToken, verifier.verifyManager], fu
     ManagerService.getClassInfo(req).then((result) => {
         respond.success(res, result);
     }).catch((err) => {
-        respond.withError(res.err);
+        respond.withError(res,err);
     })
 })
 
@@ -59,7 +59,7 @@ router.delete('/:id/deleteClass',[verifier.verifyToken, verifier.verifyManager],
     ManagerService.deleteClass(req).then((result)=>{
         respond.success(res,result);
     }).catch((err)=>{
-        respond.withError(res.err);
+        respond.withError(res,err);
     })
 })
 
@@ -67,7 +67,15 @@ router.put('/:id/editClass',[verifier.verifyToken, verifier.verifyManager],funct
     ManagerService.editClass(req).then((result)=>{
         respond.success(res,result);
     }).catch((err)=>{
-        respond.withError(res.err);
+        respond.withError(res,err);
+    })
+})
+
+router.put('/createQr',[verifier.verifyToken,verifier.verifyManager],function(req,res,next){
+    ManagerService.createQr(req).then((result)=>{
+        respond.success(res,result);
+    }).catch((err)=>{
+        respond.withError(res,err);
     })
 })
 module.exports = router;
