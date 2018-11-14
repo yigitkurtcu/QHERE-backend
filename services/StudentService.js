@@ -53,7 +53,8 @@ studentService.joinClass = req => {
         studentId: req.tokenData.userId
       })
       .then(res => {
-        if (res.length > 0) return reject(StudentError.StudentAlreadyJoin());
+        if (res.length > 0) 
+          return reject(StudentError.StudentAlreadyRequested())
 
         User.findOne({
             _id: req.tokenData.userId
@@ -63,6 +64,10 @@ studentService.joinClass = req => {
                 _id: req.params.id
               })
               .then(classInstance => {
+                var studentId = classInstance.students.find(student => student.userId === req.tokenData.userId)
+                if (studentId) 
+                  return reject(StudentError.StudentAlreadyJoin())
+
                 var classReq = new ClassRequest({
                   'managerId': classInstance.managerId,
                   'managerName': classInstance.managerName,

@@ -54,12 +54,6 @@ ManagerService.approveStudents = (req) => {
         
       User.findOne({ _id: approveStudent.studentId }).then((instance) => {
         Class.findOne({ _id: approveStudent.classId }).then((classInstance) => {
-          const studentId = classInstance.students.find(student => student.userId === approveStudent.studentId)
-          if (studentId) {
-            ClassesRequest.findOneAndDelete({ _id: req.params.id }).then(() => {
-              return reject(ManagerError.NotAcceptable());
-            })  
-          }else{
             Class.findOneAndUpdate({ _id: approveStudent.classId }, {
               $push: {
                 students: {
@@ -84,7 +78,6 @@ ManagerService.approveStudents = (req) => {
             }).catch((err) => {
               return reject(err)
             })
-          }
         }).catch((err) => {
           return reject(ManagerError.BusinessException(err))
         })
