@@ -63,8 +63,8 @@ router.delete('/:id/deleteClass',[verifier.verifyToken, verifier.verifyManager],
     })
 })
 
-router.put('/:id/editClass',[verifier.verifyToken, verifier.verifyManager],function(req,res,next){
-    ManagerService.editClass(req).then((result)=>{
+router.put('/:id/updateClass',[verifier.verifyToken, verifier.verifyManager],function(req,res,next){
+    ManagerService.updateClass(req).then((result)=>{
         respond.success(res,result);
     }).catch((err)=>{
         respond.withError(res,err);

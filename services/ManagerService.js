@@ -9,19 +9,16 @@ ManagerService = {};
 
 ManagerService.createClass = req => {
   return new Promise((resolve, reject) => {
-    User.findOne({ _id: req.tokenData.userId })
-      .then(userInstance => {
-        const {
-          className,
-          lastJoinTime,
-          quota,
-          discontinuity,
-          description
-        } = req.body;
-        Class.findOneAndUpdate({_id:req.body._id},req.body,{new:true}).then((instance)=>{
-            if(instance)
-              return resolve (instance)
-            let createClass = Class({
+        User.findOne({ _id: req.tokenData.userId })
+            .then(userInstance => {
+              const {
+                className,
+                lastJoinTime,
+                quota,
+                discontinuity,
+                description
+              } = req.body;
+              let createClass = Class({
               managerId: req.tokenData.userId,
               className,
               lastJoinTime,
@@ -40,10 +37,6 @@ ManagerService.createClass = req => {
       }).catch((err)=>{
         return reject(ManagerError.BusinessException());
       })
-      })
-      .catch(err => {
-        return reject(ManagerError.BusinessException());
-      });
   });
 };
 
@@ -161,7 +154,7 @@ ManagerService.deleteClass=(req)=>{
     })
 }
 
-ManagerService.editClass=(req)=>{
+ManagerService.updateClass=(req)=>{
     return new Promise((resolve,reject)=>{
         Class.findOneAndUpdate({_id:req.params.id},req.body,{ new: true }).then((instance)=>{
                 return resolve(instance);
@@ -174,7 +167,6 @@ ManagerService.editClass=(req)=>{
 
 ManagerService.createQr=(req)=>{
   return new Promise((resolve,reject)=>{
-      console.log(req.body);
       Class.findOne({_id:req.body.classId}).then((instance)=>{
         if(instance.qheres.length==15)
             return reject (ManagerError.BadRequest());
