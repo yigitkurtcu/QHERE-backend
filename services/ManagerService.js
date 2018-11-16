@@ -2,6 +2,7 @@ const _ = require("lodash");
 const Class = require("../models/Class");
 const User = require("../models/Users");
 const ClassesRequest = require("../models/ClassRequest");
+const RejectedRequest=require("../models/RejectedRequest");
 const ManagerError = require("../errors/ManagerError");
 const SystemError = require("../errors/SystemError");
 ManagerService = {};
@@ -93,7 +94,19 @@ ManagerService.approveStudents = (req) => {
 ManagerService.rejectStudents = (req) => {
   return new Promise((resolve, reject) => {
     ClassesRequest.findOneAndDelete({ _id: req.params.id }).then((rejectStudent) => {
-      return resolve(rejectStudent)
+      let rejectedStudent = RejectedRequest({
+      classId:rejectStudent.classId,
+      className:rejectStudent.className,
+      studentId:rejectStudent.studentId,
+      studentName: rejectStudent.studentName
+      })
+      rejectedStudent.save()
+        .then((rejectInstance) => {
+          return resolve(rejectInstance);
+        })
+        .catch(err => {
+          return reject(ManagerError.BusinessException());
+        });
     }).catch(err => {
       return reject(SystemError.BusinessException(err));
     });
