@@ -39,7 +39,7 @@ router.put('/:id/approveStudent', [verifier.verifyToken, verifier.verifyManager]
     });
 });
 
-router.get('/:id/rejectStudent', [verifier.verifyToken, verifier.verifyManager], function (req, res, next) {
+router.post('/:id/rejectStudent', [verifier.verifyToken, verifier.verifyManager], function (req, res, next) {
     ManagerService.rejectStudents(req).then((result) => {
         respond.success(res, result);
     }).catch((err) => {

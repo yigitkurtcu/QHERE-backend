@@ -32,10 +32,10 @@ ManagerService.createClass = req => {
               return resolve(classInstance);
             })
             .catch(err => {
-              return reject(ManagerError.BusinessException());
+              return reject(SystemError.BusinessException(err));
             });
       }).catch((err)=>{
-        return reject(ManagerError.BusinessException());
+        return reject(SystemError.BusinessException(err));
       })
   });
 };
@@ -44,36 +44,27 @@ ManagerService.approveStudents = (req) => {
   return new Promise((resolve, reject) => {
     ClassesRequest.findOne({ _id: req.params.id }).then((approveStudent) => {
       if (approveStudent === null)
-        return reject("ClassRequestte istek yok");
+        return reject(ManagerError.ClassRequestNotFound());
         
       User.findOne({ _id: approveStudent.studentId }).then((instance) => {
-        Class.findOne({ _id: approveStudent.classId }).then((classInstance) => {
-            Class.findOneAndUpdate({ _id: approveStudent.classId }, {
-              $push: {
-                students: {
-                  $each: [{
-                    "userId": instance._id,
-                    "fullName": instance.fullName,
-                    "schoolNumber": instance.schoolNumber,
-                    "email": instance.email
-                  }],
-                  $slice: classInstance.quota
-                }
-              }
-            }, { new: true }).then((instance) => {
-              if (classInstance.students.length == classInstance.quota)
-                return reject(ManagerError.BadRequest())
-
-              ClassesRequest.findOneAndDelete({ _id: req.params.id }).then(() => {
-                return resolve(instance);
-              }).catch((err) => {
-                return reject(ManagerError.BusinessException())
-              })
-            }).catch((err) => {
-              return reject(err)
-            })
+        let newStudent = {
+          "userId": instance._id,
+          "fullName": instance.fullName,
+          "schoolNumber": instance.schoolNumber,
+          "email": instance.email
+        };
+        Class.findOneAndUpdate({ _id: approveStudent.classId }, {
+          $push: {
+            students: newStudent
+          }
+        }, { new: true }).then((instance) => {
+          ClassesRequest.findOneAndDelete({ _id: req.params.id }).then(() => {
+            return resolve(instance);
+          }).catch((err) => {
+            return reject(ManagerError.BusinessException())
+          })
         }).catch((err) => {
-          return reject(ManagerError.BusinessException(err))
+          return reject(err)
         })
       }).catch((err) => {
         return reject(ManagerError.BusinessException(err))
@@ -98,7 +89,7 @@ ManagerService.rejectStudents = (req) => {
           return resolve(rejectInstance);
         })
         .catch(err => {
-          return reject(ManagerError.BusinessException());
+          return reject(SystemError.BusinessException(err));
         });
     }).catch(err => {
       return reject(SystemError.BusinessException(err));

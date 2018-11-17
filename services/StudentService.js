@@ -3,6 +3,7 @@ var moment = require("moment");
 const Class = require("../models/Class");
 const User = require("../models/Users");
 const ClassRequest = require("../models/ClassRequest");
+const RejectedRequest = require("../models/RejectedRequest");
 const SystemError = require("../errors/SystemError");
 const StudentError = require("../errors/StudentError");
 studentService = {};
@@ -51,48 +52,57 @@ studentService.joinClass = req => {
     ClassRequest.find({
         classId: req.params.id,
         studentId: req.tokenData.userId
-      })
-      .then(res => {
-        if (res.length > 0) 
-          return reject(StudentError.StudentAlreadyRequested())
+    })
+    .then(res => {
+      if (res.length > 0)  //Check class for student request
+        return reject(StudentError.StudentAlreadyRequested())
 
-        User.findOne({
-            _id: req.tokenData.userId
-          })
+      RejectedRequest.find({
+        classId: req.params.id,
+        studentId: req.tokenData.userId
+      }).then(rejected => {
+        if (rejected.length > 0)  //Check class for student request
+          return reject(StudentError.Rejected())
+        
+      Class.findOne({ _id: req.params.id }).then(classInstance => {
+        var studentId = classInstance.students.find(student => student.userId === req.tokenData.userId) //Check class for student
+        if (studentId) 
+          return reject(StudentError.StudentAlreadyJoin())
+
+        if(classInstance.quota == classInstance.students.length)  //Check class quota
+          return reject(StudentError.ClassFull())
+
+        User.findOne({ _id: req.tokenData.userId })
           .then(userInstance => {
-            Class.findOne({
-                _id: req.params.id
-              })
-              .then(classInstance => {
-                var studentId = classInstance.students.find(student => student.userId === req.tokenData.userId)
-                if (studentId) 
-                  return reject(StudentError.StudentAlreadyJoin())
+            var classReq = new ClassRequest({
+              'managerId': classInstance.managerId,
+              'managerName': classInstance.managerName,
+              'classId': req.params.id,
+              'className': classInstance.className,
+              'studentId': req.tokenData.userId,
+              'studentName': userInstance.fullName,
+              'studentNumber':req.tokenData.schoolNumber,
+              'requestDate': moment().toDate()
+            });
 
-                var classReq = new ClassRequest({
-                  'managerId': classInstance.managerId,
-                  'managerName': classInstance.managerName,
-                  'classId': req.params.id,
-                  'className': classInstance.className,
-                  'studentId': req.tokenData.userId,
-                  'studentName': userInstance.fullName,
-                  'studentNumber':req.tokenData.schoolNumber,
-                  'requestDate': moment().toDate()
-                });
-                classReq.save()
-                  .then(instance => {
-                    return resolve(instance);
-                  }).catch(err => {
-                    return reject(SystemError.BusinessException(err));
-                  })
-              }).catch(err => {
-                return reject(SystemError.BusinessException(err));
-              })
+            classReq.save()
+            .then(instance => {
+              return resolve(instance);
+            }).catch(err => {
+              return reject(SystemError.BusinessException(err));
+            })
           }).catch(err => {
             return reject(SystemError.BusinessException(err));
           })
+        }).catch(err => {
+          return reject(SystemError.BusinessException(err));
+        })
       }).catch(err => {
         return reject(SystemError.BusinessException(err));
-      })
+      })    
+    }).catch(err => {
+      return reject(SystemError.BusinessException(err));
+    })
   })
 };
 

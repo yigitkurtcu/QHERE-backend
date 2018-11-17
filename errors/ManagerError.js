@@ -16,6 +16,14 @@ ManagerError.BadRequest = () => {
     }
 };
 
+ManagerError.ClassRequestNotFound = () => {
+    return {
+        status_code: 404, 
+        name : 'ClassRequestNotFound',
+        message: 'Class request not found.'
+    }
+};
+
 ManagerError.BusinessException = () => {
     return {
         status_code: 400, 
