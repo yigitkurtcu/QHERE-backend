@@ -71,7 +71,7 @@ router.put('/:id/updateClass',[verifier.verifyToken, verifier.verifyManager],fun
     })
 })
 
-router.put('/createQr',[verifier.verifyToken,verifier.verifyManager],function(req,res,next){
+router.put('/createQr', [verifier.verifyToken,verifier.verifyManager], function(req,res,next){
     ManagerService.createQr(req).then((result)=>{
         respond.success(res,result);
     }).catch((err)=>{

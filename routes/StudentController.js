@@ -35,4 +35,14 @@ router.post("/:id/joinClass", verifier.verifyToken, function(req, res, next) {
     });
 });
 
+router.post("/:classId/joinRollCall/:qhereId", verifier.verifyToken, function(req, res, next) {
+  StudentService.joinRollCall(req)
+    .then(result => {
+      respond.success(res, result);
+    })
+    .catch(err => {
+      respond.withError(res, err);
+    });
+});
+
 module.exports = router;

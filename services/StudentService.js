@@ -106,4 +106,40 @@ studentService.joinClass = req => {
   })
 };
 
+studentService.joinRollCall = req => { //TODO Student classtamı kontrolu yapılacak
+  return new Promise(function (resolve, reject) {
+    var classId = req.params.classId; 
+    var qhereId = req.params.qhereId;
+    var studentId = req.tokenData.userId; 
+
+    User.findOne({ _id: studentId }).then(userInstance => {
+      Class.findOne({ _id: classId }).then(classInstance => {
+        if(!(classInstance.students.find(student => student.userId == studentId))) //Check is user joined class
+          return reject('User is not joined this class')
+
+        var qhereInstance = classInstance.qheres.find(qhere => qhere._id == qhereId)
+        
+        if(qhereInstance.students.find(student => student._id == studentId)) //Check user is already joined roll call
+          return reject('User is already joined rollcall')
+
+        qhereInstance.students.push(userInstance);
+        classInstance.qheres[qhereInstance.number - 1] = qhereInstance
+
+        Class.findOneAndUpdate({ _id: classId }, {qheres: classInstance.qheres}, {new: true}).then(updatedClass => {
+          return resolve(updatedClass)
+        }).catch(err => {
+        console.log('err:', err)
+        return reject(err)
+        })
+      }).catch(err => {
+        console.log('err:', err)
+        return reject(err)
+      })
+    }).catch(err => {
+      console.log('err:', err)
+      return reject(err)
+    })
+  })
+};
+
 module.exports = studentService;
