@@ -187,7 +187,9 @@ ManagerService.createQr=(req)=>{
 
 ManagerService.getQrInfo=(req)=>{
   return new Promise((resolve,reject)=>{
-    Class.findOne({"qheres._id":req.params.id}).then((qrInstance)=>{
+    Class.findOne({$and:[{"qheres._id":req.params.id},{managerId:req.tokenData.userId}]}).then((qrInstance)=>{
+      if(qrInstance===null)
+        return reject (ManagerError.BadRequest());
       qrInstance.qheres.find(qhere=>{
         if(JSON.stringify(qhere._id===req.params.id))
           return resolve(qhere);
