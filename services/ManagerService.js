@@ -42,7 +42,7 @@ ManagerService.createClass = req => {
 
 ManagerService.approveStudents = (req) => {
   return new Promise((resolve, reject) => {
-    ClassesRequest.findOne({ _id: req.params.id }).then((approveStudent) => {
+    ClassesRequest.findOne({$and:[{_id: req.params.id },{managerId:req.tokenData.userId}]}).then((approveStudent) => {
       if (approveStudent === null)
         return reject(ManagerError.ClassRequestNotFound());
         
@@ -77,7 +77,10 @@ ManagerService.approveStudents = (req) => {
 
 ManagerService.rejectStudents = (req) => {
   return new Promise((resolve, reject) => {
-    ClassesRequest.findOneAndDelete({ _id: req.params.id }).then((rejectStudent) => {
+    ClassesRequest.findOneAndDelete({$and:[{_id: req.params.id },{managerId:req.tokenData.userId}]}).then((rejectStudent) => {
+      if(rejectStudent===null)
+        return reject(ManagerError.BadRequest())
+
       let rejectedStudent = RejectedRequest({
       classId:rejectStudent.classId,
       className:rejectStudent.className,
@@ -111,8 +114,11 @@ ManagerService.getClasses = req => {
 
 ManagerService.getClassInfo = req => {
   return new Promise((resolve, reject) => {
-    Class.find({ _id: req.params.id })
+    Class.find({$and:[{_id: req.params.id },{managerId:req.tokenData.userId}]})
       .then(classInstance => {
+        if(classInstance.length===0)
+          return reject(ManagerError.BadRequest());
+
         return resolve(classInstance);
       })
       .catch(err => {
@@ -136,8 +142,11 @@ ManagerService.getClassesRequest = req => {
 
 ManagerService.deleteClass=(req)=>{
     return new Promise((resolve,reject)=>{
-        Class.findOneAndDelete({_id:req.params.id}).then((classInstance)=>{
-                    return resolve(classInstance)
+        Class.findOneAndDelete({$and:[{_id:req.params.id},{managerId:req.tokenData.userId}]}).then((classInstance)=>{
+          if(classInstance===null)
+            return reject(ManagerError.BadRequest())  
+          
+          return resolve(classInstance)
         })
         .catch((err)=>{
             return reject (ManagerError.BadRequest())
@@ -147,8 +156,11 @@ ManagerService.deleteClass=(req)=>{
 
 ManagerService.updateClass=(req)=>{
     return new Promise((resolve,reject)=>{
-        Class.findOneAndUpdate({_id:req.params.id},req.body,{ new: true }).then((instance)=>{
-                return resolve(instance);
+        Class.findOneAndUpdate({$and:[{_id:req.params.id},{managerId:req.tokenData.userId}]},req.body,{ new: true }).then((instance)=>{
+          if(instance===null)
+            return reject(ManagerError.BadRequest())
+
+          return resolve(instance);
         })
         .catch((err)=>{
                 return reject (ManagerError.BadRequest())
@@ -158,8 +170,8 @@ ManagerService.updateClass=(req)=>{
 
 ManagerService.createQr=(req)=>{
   return new Promise((resolve,reject)=>{
-      Class.findOne({_id:req.body.classId}).then((instance)=>{
-        if(instance.qheres.length==15)
+      Class.findOne({$and:[{_id:req.body.classId},{managerId:req.tokenData.userId}]}).then((instance)=>{
+        if(instance===null || instance.qheres.length===15 )
             return reject (ManagerError.BadRequest());
 
         Class.findOneAndUpdate({_id:req.body.classId},{$push:{qheres:{"number":instance.qheres.length+1}}},{new:true}).then((updateInstance)=>{
