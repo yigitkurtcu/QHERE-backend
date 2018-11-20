@@ -78,4 +78,12 @@ router.put('/createQr', [verifier.verifyToken,verifier.verifyManager], function(
         respond.withError(res,err);
     })
 })
+
+router.get('/getQrInfo/:id',[verifier.verifyToken,verifier.verifyManager],function(req,res,next){
+    ManagerService.getQrInfo(req).then((result)=>{
+        respond.success(res,result);
+    }).catch((err)=>{
+        respond.withError(res,err);
+    })
+})
 module.exports = router;

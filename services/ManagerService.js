@@ -185,4 +185,17 @@ ManagerService.createQr=(req)=>{
   })
 }
 
+ManagerService.getQrInfo=(req)=>{
+  return new Promise((resolve,reject)=>{
+    Class.findOne({"qheres._id":req.params.id}).then((qrInstance)=>{
+      qrInstance.qheres.find(qhere=>{
+        if(JSON.stringify(qhere._id===req.params.id))
+          return resolve(qhere);
+      })
+    }).catch((err)=>{
+      return reject (SystemError.BusinessException(err))
+    })
+  })
+}
+
 module.exports = ManagerService;
