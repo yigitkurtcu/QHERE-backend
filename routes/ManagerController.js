@@ -86,4 +86,13 @@ router.get('/getQrInfo/:id',[verifier.verifyToken,verifier.verifyManager],functi
         respond.withError(res,err);
     })
 })
+
+router.post('/sendNotification',[verifier.verifyToken,verifier.verifyManager],(req,res,next)=>{
+    ManagerService.sendNotification(req).then((result)=>{
+        respond.success(res,result);
+    }).catch((err)=>{
+        respond.withError(res,err);
+    })
+})
+
 module.exports = router;

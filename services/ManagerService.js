@@ -1,4 +1,5 @@
 const _ = require("lodash");
+var moment = require("moment");
 const Class = require("../models/Class");
 const User = require("../models/Users");
 const ClassesRequest = require("../models/ClassRequest");
@@ -197,6 +198,21 @@ ManagerService.getQrInfo=(req)=>{
       })
     }).catch((err)=>{
       return reject (SystemError.BusinessException(err))
+    })
+  })
+}
+
+ManagerService.sendNotification=(req)=>{
+  return new Promise((resolve,reject)=>{
+    const newReq ={
+      title:req.body.title,
+      content:req.body.content,
+      sendDate:moment().toDate()
+    }
+    Class.findOneAndUpdate({$and:[{_id:req.body.id},{managerId:req.tokenData.userId}]},{ $push:{notification:newReq}},{new:true}).then((instance)=>{
+      return resolve (instance);
+    }).catch((err)=>{
+      return reject(err);
     })
   })
 }

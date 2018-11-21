@@ -45,6 +45,11 @@ var classSchema = mongoose.Schema({
       email: String,
       schoolNumber: Number
     }]
+  }],
+  notification:[{
+    title:String,
+    content:String,
+    sendDate:Date,
   }]
 });
 module.exports = mongoose.model("Class", classSchema);
