@@ -187,11 +187,12 @@ ManagerService.createQr=(req)=>{
 
 ManagerService.getQrInfo=(req)=>{
   return new Promise((resolve,reject)=>{
-    Class.findOne({$and:[{"qheres._id":req.params.id},{managerId:req.tokenData.userId}]}).then((qrInstance)=>{
+    console.log(req.params.id)
+    Class.findOne({$and:[{"qheres._id":{_id:req.params.id}},{managerId:req.tokenData.userId}]}).then((qrInstance)=>{
       if(qrInstance===null)
         return reject (ManagerError.BadRequest());
       qrInstance.qheres.find(qhere=>{
-        if(JSON.stringify(qhere._id===req.params.id))
+        if(JSON.stringify(qhere._id)===JSON.stringify(req.params.id))
           return resolve(qhere);
       })
     }).catch((err)=>{
