@@ -6,31 +6,31 @@ QHERE backend service
 
 * [x] Register
 * [x] Login
-* [ ] Logout
+* [x] Logout
 * [ ] Activate
   * [ ] Send activation code
   * [ ] Approve activation code
-* [ ] Forgot
-  * [ ] Send reset code
-  * [ ] Approve reset code
+* [x] Forgot
+  * [x] Send reset code
+  * [x] Approve reset code
   
 ## Manager Services
 
 * [x] CreateClass
-* [ ] GetClassRequests
+* [x] GetClassRequests
 * [x] ApproveStudents
 * [x] RejectStudents
-* [ ] CreateQhere
+* [x] CreateQhere
 * [ ] ListActiveClassInfo
-* [ ] ListClassInfo
-* [ ] ListClasses
+* [x] ListClassInfo
+* [x] ListClasses
 
 ## Student Services
 
 * [x] GetOpenClasses
-* [ ] JoinClass
-* [ ] JoinRollCall
-* [ ] ListClasses
+* [x] JoinClass
+* [x] JoinRollCall
+* [x] ListClasses
 
 
 
