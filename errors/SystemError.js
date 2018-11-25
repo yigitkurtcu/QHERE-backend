@@ -8,4 +8,12 @@ SystemError.BusinessException = (err) => {
     }
 };
 
+SystemError.WrongEndPoint = () => {
+    return {
+        status_code: 400, 
+        name : 'WrongEndPoint',
+        message: 'This endpoint is wrong!'
+    }
+};
+
 module.exports = SystemError;

@@ -13,19 +13,36 @@ studentService.getClasses = req => {
   return new Promise(function (resolve, reject) {
     Class.find({})
       .then(classes => {
-        return resolve(classes);
+        let filteredClasses = classes
+        .filter(classInstance => classInstance.lastJoinTime > moment().toDate())
+        .filter(classInstance => classInstance.quota > classInstance.students.length)
+
+        filteredClasses = filteredClasses.map(x =>
+          _.pick(x, [
+            "_id",
+            "managerId",
+            "className",
+            "joinTime",
+            "quota",
+            "discontinuity",
+            "description",
+            "managerName",
+            "lastJoinTime"
+          ])
+        );
+        return resolve(filteredClasses);
       })
       .catch(err => {
-        return reject(new SystemError.BusinessException());
+        console.log(err)
+        return reject(SystemError.BusinessException(err));
       });
   });
 };
 
+
 studentService.getUserClasses = req => {
   return new Promise(function (resolve, reject) {
-    Class.find({
-        "students.schoolNumber": req.tokenData.schoolNumber
-      })
+    Class.find({ "students.schoolNumber": req.tokenData.schoolNumber })
       .then(res => {
         var result = res.map(x =>
           _.pick(x, [
@@ -37,19 +54,7 @@ studentService.getUserClasses = req => {
             "discontinuity",
             "description",
             "managerName"
-          ])/*
-          var lessonCount = 0, rollCall = 0;
-          x.qheres.forEach(qhere => {
-            lessonCount++;
-            console.log(qhere)
-            qhere.students.find(student => {
-              student.schoolNumber == req.tokenData.schoolNumber ? rollCall++ : null;
-            })
-          })
-          console.log('lessonCount ', lessonCount)
-          console.log('rollCall ', rollCall)
-          x.lessonCount = lessonCount;
-          x.rollCall = rollCall;*/
+          ])
         );
         return resolve(result);
       })

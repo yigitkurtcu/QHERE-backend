@@ -41,7 +41,7 @@ app.use("/auth", AuthController);
 
 
 app.use(function (req, res) {
-  respond.withError(res, SystemError.BusinessException());
+  respond.withError(res, SystemError.WrongEndPoint());
 });
 
 module.exports = app;
