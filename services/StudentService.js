@@ -36,7 +36,19 @@ studentService.getUserClasses = req => {
             "discontinuity",
             "description",
             "managerName"
-          ])
+          ])/*
+          var lessonCount = 0, rollCall = 0;
+          x.qheres.forEach(qhere => {
+            lessonCount++;
+            console.log(qhere)
+            qhere.students.find(student => {
+              student.schoolNumber == req.tokenData.schoolNumber ? rollCall++ : null;
+            })
+          })
+          console.log('lessonCount ', lessonCount)
+          console.log('rollCall ', rollCall)
+          x.lessonCount = lessonCount;
+          x.rollCall = rollCall;*/
         );
         return resolve(result);
       })
@@ -106,7 +118,7 @@ studentService.joinClass = req => {
   })
 };
 
-studentService.joinRollCall = req => { //TODO Student classtamı kontrolu yapılacak
+studentService.joinRollCall = req => {
   return new Promise(function (resolve, reject) {
     var classId = req.params.classId; 
     var qhereId = req.params.qhereId;
