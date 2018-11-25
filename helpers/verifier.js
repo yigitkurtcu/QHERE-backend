@@ -12,7 +12,7 @@ module.exports.verifyToken = function (req, res, next) {
         console.log('Token has been approved', req.tokenData);
         return next();
     }).catch((error) => {
-        console.log(error)
+
         return respond.withError(res, error);
     });
 };
@@ -23,7 +23,7 @@ module.exports.verifyManager = function (req, res, next) {
         console.log('Manager authorization is approved.', req.tokenData);
         return next();
     }).catch((error) => {
-        console.log(error)
+        
         return respond.withError(res, error);
     });
 };

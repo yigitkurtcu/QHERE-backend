@@ -175,8 +175,9 @@ ManagerService.createQr=(req)=>{
         if(instance===null || instance.qheres.length===15 )
             return reject (ManagerError.BadRequest());
 
-        Class.findOneAndUpdate({_id:req.body.classId},{$push:{qheres:{"number":instance.qheres.length+1}}},{new:true}).then((updateInstance)=>{
+        Class.findOneAndUpdate({_id:req.body.classId},{$push:{qheres:{"number":instance.qheres.length+1}}},{new:true}).then((updateInstance)=>{     
           return resolve(updateInstance)
+
         }).catch((err)=>{
           return reject(SystemError.BusinessException(err))
         })
@@ -188,7 +189,7 @@ ManagerService.createQr=(req)=>{
 
 ManagerService.getQrInfo=(req)=>{
   return new Promise((resolve,reject)=>{
-    console.log(req.params.id)
+    
     Class.findOne({$and:[{"qheres._id":{_id:req.params.id}},{managerId:req.tokenData.userId}]}).then((qrInstance)=>{
       if(qrInstance===null)
         return reject (ManagerError.BadRequest());

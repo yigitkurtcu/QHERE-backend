@@ -6,6 +6,7 @@ const ClassRequest = require("../models/ClassRequest");
 const RejectedRequest = require("../models/RejectedRequest");
 const SystemError = require("../errors/SystemError");
 const StudentError = require("../errors/StudentError");
+var socket = require('socket.io-client')('http://localhost:3001/');
 studentService = {};
 
 studentService.getClasses = req => {
@@ -41,7 +42,7 @@ studentService.getUserClasses = req => {
         return resolve(result);
       })
       .catch(err => {
-        console.log(err);
+
         return reject(SystemError.BusinessException(err));
       });
   });
@@ -124,8 +125,8 @@ studentService.joinRollCall = req => { //TODO Student classtamı kontrolu yapıl
 
         qhereInstance.students.push(userInstance);
         classInstance.qheres[qhereInstance.number - 1] = qhereInstance
-
         Class.findOneAndUpdate({ _id: classId }, {qheres: classInstance.qheres}, {new: true}).then(updatedClass => {
+          socket.emit('approveClass',{ classId:classId, fullName:userInstance.fullName,schoolNumber:userInstance.schoolNumber });
           return resolve(updatedClass)
         }).catch(err => {
         console.log('err:', err)
