@@ -5,7 +5,7 @@ const verifier = require("./../helpers/verifier");
 
 const StudentService = require("../services/StudentService.js");
 
-router.get("/getClasses", verifier.verifyToken, function(req, res, next) {
+router.get("/getClasses", verifier.verifyToken, function(req, res) {
   StudentService.getClasses(req)
     .then(result => {
       respond.success(res, result);
@@ -15,7 +15,7 @@ router.get("/getClasses", verifier.verifyToken, function(req, res, next) {
     });
 });
 
-router.get("/getUserClasses", verifier.verifyToken, function(req, res, next) {
+router.get("/getUserClasses", verifier.verifyToken, function(req, res) {
   StudentService.getUserClasses(req)
     .then(result => {
       respond.success(res, result);
@@ -25,7 +25,7 @@ router.get("/getUserClasses", verifier.verifyToken, function(req, res, next) {
     });
 });
 
-router.post("/:id/joinClass", verifier.verifyToken, function(req, res, next) {
+router.post("/:id/joinClass", verifier.verifyToken, function(req, res) {
   StudentService.joinClass(req)
     .then(result => {
       respond.success(res, result);
@@ -35,8 +35,18 @@ router.post("/:id/joinClass", verifier.verifyToken, function(req, res, next) {
     });
 });
 
-router.post("/:classId/joinRollCall/:qhereId", verifier.verifyToken, function(req, res, next) {
+router.post("/:classId/joinRollCall/:qhereId", verifier.verifyToken, function(req, res) {
   StudentService.joinRollCall(req)
+    .then(result => {
+      respond.success(res, result);
+    })
+    .catch(err => {
+      respond.withError(res, err);
+    });
+});
+
+router.get("/:classId/getDiscontinuity", verifier.verifyToken, function(req, res) {
+  StudentService.getDiscontinuity(req)
     .then(result => {
       respond.success(res, result);
     })

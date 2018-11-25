@@ -155,4 +155,30 @@ studentService.joinRollCall = req => {
   })
 };
 
+studentService.getDiscontinuity = req => {
+  return new Promise(function (resolve, reject) {
+    var classId = req.params.classId;
+    var schoolNumber = req.tokenData.schoolNumber; 
+    var qhereCount = 0, rollCall = 0;
+    Class.findOne({ _id: classId }).then(classInstance => {
+      classInstance.qheres.forEach(qhere => {
+        qhereCount++;
+        qhere.students.find(student => {
+          student.schoolNumber == schoolNumber ? rollCall++ : null;
+        })
+      })
+      var discontinuity = {
+        qhereCount,
+        rollCall
+      }
+      console.log('qhereCount ', qhereCount)
+      console.log('rollCall ', rollCall)
+      return resolve(discontinuity)
+    }).catch(err => {
+      console.log(err)
+      return reject(SystemError.BusinessException(err));
+    })
+  })
+};
+
 module.exports = studentService;
