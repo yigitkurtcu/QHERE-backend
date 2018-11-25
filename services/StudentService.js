@@ -129,15 +129,12 @@ studentService.joinRollCall = req => { //TODO Student classtamı kontrolu yapıl
           socket.emit('approveClass',{ classId:classId, fullName:userInstance.fullName,schoolNumber:userInstance.schoolNumber });
           return resolve(updatedClass)
         }).catch(err => {
-        console.log('err:', err)
         return reject(err)
         })
       }).catch(err => {
-        console.log('err:', err)
         return reject(err)
       })
     }).catch(err => {
-      console.log('err:', err)
       return reject(err)
     })
   })
