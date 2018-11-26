@@ -108,7 +108,6 @@ studentService.joinClass = req => {
           return reject(StudentError.Rejected())
         
       Class.findOne({ _id: req.params.id }).then(classInstance => {
-        console.log(classInstance.lastJoinTime)
         if(classInstance.lastJoinTime-moment().toDate()<0)
           return reject(StudentError.Expired());
         var studentId = classInstance.students.find(student => student.userId === req.tokenData.userId) //Check class for student
