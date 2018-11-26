@@ -16,6 +16,14 @@ ManagerError.BadRequest = () => {
     }
 };
 
+ManagerError.FieldEmpty = () => {
+    return {
+        status_code: 400, 
+        name : 'Field Empty',
+        message: 'Fields is empty'
+    }
+};
+
 ManagerError.ClassRequestNotFound = () => {
     return {
         status_code: 404, 

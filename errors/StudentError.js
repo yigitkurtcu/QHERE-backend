@@ -24,6 +24,14 @@ StudentError.ClassFull = () => {
     }
 };
 
+StudentError.Expired = () => {
+    return {
+        status_code: 400, 
+        name : 'Expired',
+        message: 'Expired'
+    }
+};
+
 StudentError.Rejected = () => {
     return {
         status_code: 400, 

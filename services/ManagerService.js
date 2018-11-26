@@ -205,6 +205,8 @@ ManagerService.getQrInfo=(req)=>{
 
 ManagerService.sendNotification=(req)=>{
   return new Promise((resolve,reject)=>{
+    if(req.body.title==="" || req.body.content==="")
+      return reject (ManagerError.FieldEmpty());
     const newReq ={
       title:req.body.title,
       content:req.body.content,
