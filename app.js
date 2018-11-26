@@ -6,7 +6,6 @@ const cors = require("cors");
 const http=require('http');
 const socketio=require('socket.io');
 const rateLimit = require("express-rate-limit");
-const expressip = require('express-ip');
 
 const UserController = require("./routes/UserController");
 const ManagerController = require("./routes/ManagerController");
@@ -37,7 +36,6 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
-app.use(expressip().getIpInfoMiddleware);
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({
@@ -54,7 +52,6 @@ app.use("/auth", AuthController);
 
 
 app.use(function (req, res) {
-  console.log('IP: ', req.ipInfo);
   console.log('IP: ', req.headers['x-forwarded-for'] || req.connection.remoteAddress);
   respond.withError(res, SystemError.WrongEndPoint());
 });
