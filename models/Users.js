@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 const UserSchema = Schema({
   schoolNumber: {
     type: Number,
-    required: true
   },
   fullName: {
     type: String,

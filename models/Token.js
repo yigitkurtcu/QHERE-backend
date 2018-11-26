@@ -12,7 +12,6 @@ var tokenSchema = mongoose.Schema({
     },
     schoolNumber: {
         type: Number,
-        required: true
     },
     token :{
         accessToken:{

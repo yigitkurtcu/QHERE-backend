@@ -16,6 +16,22 @@ UserError.UserNotFound = () => {
     }
 };
 
+UserError.UserNotActive = () => {
+    return {
+        status_code: 404, 
+        name : 'UserNotActive',
+        message: 'User not active.'
+    }
+};
+
+UserError.UserSchoolNumber = () => {
+    return {
+        status_code: 404, 
+        name : 'UserSchoolNumber',
+        message: 'Scholl number empty'
+    }
+};
+
 UserError.CodeNotValid = () => {
     return {
         status_code: 406, 
