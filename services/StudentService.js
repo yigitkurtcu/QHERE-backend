@@ -11,29 +11,54 @@ studentService = {};
 
 studentService.getClasses = req => {
   return new Promise(function (resolve, reject) {
+    let result = [];
     Class.find({})
       .then(classes => {
         let filteredClasses = classes
         .filter(classInstance => classInstance.lastJoinTime > moment().toDate())
         .filter(classInstance => classInstance.quota > classInstance.students.length)
 
-        filteredClasses = filteredClasses.map(x =>
-          _.pick(x, [
-            "_id",
-            "managerId",
-            "className",
-            "joinTime",
-            "quota",
-            "discontinuity",
-            "description",
-            "managerName",
-            "lastJoinTime"
-          ])
-        );
-        return resolve(filteredClasses);
+        let callbacks = filteredClasses.length;
+        filteredClasses.forEach(classInstance => {
+          ClassRequest.findOne({ classId: classInstance._id, studentId: req.tokenData.userId }).then(classReq => {
+            RejectedRequest.findOne({ classId: classInstance._id, studentId: req.tokenData.userId }).then(rejectedReq => {
+              Class.findOne({ _id: classInstance._id }).then(classLastInstance => {
+                if(!(classLastInstance.students.find(student => student.userId == req.tokenData.userId)) && !classReq && !rejectedReq){
+                  result.push(classInstance);
+                  callbacks--;
+                }else
+                  callbacks--;
+                
+
+                if(callbacks == 0){
+                  result = result.map(x =>
+                    _.pick(x, [
+                      "_id",
+                      "managerId",
+                      "className",
+                      "joinTime",
+                      "quota",
+                      "discontinuity",
+                      "description",
+                      "managerName",
+                      "lastJoinTime"
+                    ])
+                  );
+                  return resolve(result);
+                }
+              }).catch(err => {
+                return reject(SystemError.BusinessException(err));
+              });  
+            }).catch(err => {
+              return reject(SystemError.BusinessException(err));
+            });  
+          }).catch(err => {
+            return reject(SystemError.BusinessException(err));
+          });
+        })
+
       })
       .catch(err => {
-        console.log(err)
         return reject(SystemError.BusinessException(err));
       });
   });
