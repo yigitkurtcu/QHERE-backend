@@ -16,35 +16,38 @@ const UserService = {};
 UserService.login = (req) => {
     return new Promise((resolve,reject) => {
         User.findOne({email:req.body.email}).then((userInstance) => {
-            if(!userInstance) {
+            console.log(userInstance)
+            if(!userInstance) 
                 return reject(UserError.UserNotFound()); 
-            }else{
-                bcrypt.compare(req.body.password,userInstance.password, function(err, res) {
-                    if(res==true){
-                        TokenService.generateToken(userInstance).then(function (token) {
-                            userInstance = userInstance.toObject();
-                            let response = {
-                                userType: userInstance.userType,
-                                token: token
-                            };
-                            let TokenSave=Token({
-                                userId:userInstance._id,
-                                userType: userInstance.userType,
-                                schoolNumber: userInstance.schoolNumber,
-                                token:{
-                                    accessToken:token.accessToken
-                                }
-                            })
-                            TokenSave.save();
-                            return resolve(response);
-                        }).catch((err)=>{
-                        return reject(SystemError.BusinessException(err)); 
+            if(userInstance.userType==="Manager" && userInstance.isAccountActive===false)
+                return reject(UserError.UserNotActive()); 
+            
+            bcrypt.compare(req.body.password,userInstance.password, function(err, res) {
+                if(res==true){
+                    TokenService.generateToken(userInstance).then(function (token) {
+                        userInstance = userInstance.toObject();
+                        let response = {
+                            userType: userInstance.userType,
+                            token: token
+                        };
+                        let TokenSave=Token({
+                            userId:userInstance._id,
+                            userType: userInstance.userType,
+                            schoolNumber: userInstance.schoolNumber,
+                            token:{
+                                accessToken:token.accessToken
+                            }
                         })
-                    }else{
-                        return reject(SystemError.WrongPassword(err));
-                    }
-                });
-        }}).catch((err)=>{
+                        TokenSave.save();
+                        return resolve(response);
+                    }).catch((err)=>{
+                        return reject(SystemError.BusinessException(err)); 
+                    })
+                }else{
+                    return reject(SystemError.WrongPassword(err));
+                }
+            });
+        }).catch((err)=>{
             return reject(SystemError.BusinessException(err)); 
         })
     })
@@ -54,12 +57,18 @@ UserService.login = (req) => {
 UserService.register = (req) => {
 
     return new Promise((resolve,reject) => {
+        if(req.body.userType==="Student" && req.body.schoolNumber==="")
+            return reject(UserError.UserSchoolNumber());
+
+        User.findOne({schoolNumber: req.body.schoolNumber}).then((user)=>{
+            if(user && user.schoolNumber!==null) 
+                return reject(UserError.UserExist()); 
         
-        if(User.findOne({$or:[ {email:req.body.email}, {schoolNumber: req.body.schoolNumber} ]}).then((userInstance) => {
+        User.findOne({email:req.body.email}).then((userInstance) => {
             if(userInstance) 
                 return reject(UserError.UserExist());
             
-            const {schoolNumber,fullName,email,password,gender}=req.body;
+            const {schoolNumber,fullName,email,password,gender,userType}=req.body;
             
                 bcrypt.hash(password,10).then(hash=>{
                     let user = User({
@@ -67,7 +76,8 @@ UserService.register = (req) => {
                         fullName,
                         email,
                         password:hash,
-                        gender
+                        gender,
+                        userType
                     });
                     user.save()
                     .then(userInstance => {
@@ -80,8 +90,9 @@ UserService.register = (req) => {
                 })
         }).catch((err)=>{
             return reject(UserError.BusinessException()); 
-        }));
+        });
     });
+    })
 }
 
 UserService.logout=(req)=>{
