@@ -160,12 +160,12 @@ studentService.joinRollCall = req => {
     User.findOne({ _id: studentId }).then(userInstance => {
       Class.findOne({ _id: classId }).then(classInstance => {
         if(!(classInstance.students.find(student => student.userId == studentId))) //Check is user joined class
-          return reject('User is not joined this class')
+          return reject(StudentError.notInClass())
 
         var qhereInstance = classInstance.qheres.find(qhere => qhere._id == qhereId)
         
         if(qhereInstance.students.find(student => student._id == studentId)) //Check user is already joined roll call
-          return reject('User is already joined rollcall')
+          return reject(StudentError.StudentAlreadyJoinRollCall())
 
         qhereInstance.students.push(userInstance);
         classInstance.qheres[qhereInstance.number - 1] = qhereInstance

@@ -11,6 +11,8 @@
     "cors": "^2.8.4",
     "debug": "~2.6.9",
     "express": "^4.16.4",
+    "express-ip": "^1.0.3",
+    "express-rate-limit": "^3.3.2",
     "g": "^2.0.1",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.11",

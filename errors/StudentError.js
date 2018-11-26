@@ -16,6 +16,14 @@ StudentError.StudentAlreadyJoin = () => {
     }
 };
 
+StudentError.StudentAlreadyJoinRollCall = () => {
+    return {
+        status_code: 400, 
+        name : 'StudentAlreadyJoin',
+        message: 'The student has already joined roll call.'
+    }
+};
+
 StudentError.ClassFull = () => {
     return {
         status_code: 400, 
@@ -37,6 +45,14 @@ StudentError.Rejected = () => {
         status_code: 400, 
         name : 'Rejected',
         message: 'The student request is already rejected.'
+    }
+};
+
+StudentError.notInClass = () => {
+    return {
+        status_code: 400, 
+        name : 'notInClass',
+        message: 'The student is not in the class.'
     }
 };
 

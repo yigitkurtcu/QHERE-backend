@@ -5,6 +5,8 @@ const logger = require("morgan");
 const cors = require("cors");
 const http=require('http');
 const socketio=require('socket.io');
+const rateLimit = require("express-rate-limit");
+const expressip = require('express-ip');
 
 const UserController = require("./routes/UserController");
 const ManagerController = require("./routes/ManagerController");
@@ -15,6 +17,7 @@ const respond = require("./helpers/respond");
 const db = require("./helpers/db")();
 const SystemError = require("./errors/SystemError");
 
+
 const server=http.createServer((req,res)=>{
     res.end('socket baglantisi gerceklesti');
 });
@@ -24,7 +27,17 @@ const io=socketio.listen(server);
 require('./helpers/socket')(io)
 
 const app = express();
+ 
+app.enable("trust proxy"); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
+ 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message:"Too many accounts created from this IP, please try again after an hour" 
+});
 
+app.use(limiter);
+app.use(expressip().getIpInfoMiddleware);
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({
@@ -41,6 +54,7 @@ app.use("/auth", AuthController);
 
 
 app.use(function (req, res) {
+  console.log('IP: ', req.ipInfo);
   respond.withError(res, SystemError.WrongEndPoint());
 });
 
