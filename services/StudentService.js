@@ -200,11 +200,8 @@ studentService.getDiscontinuity = req => {
         qhereCount,
         rollCall
       }
-      console.log('qhereCount ', qhereCount)
-      console.log('rollCall ', rollCall)
       return resolve(discontinuity)
     }).catch(err => {
-      console.log(err)
       return reject(SystemError.BusinessException(err));
     })
   })

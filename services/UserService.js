@@ -16,36 +16,39 @@ const UserService = {};
 UserService.login = (req) => {
     return new Promise((resolve,reject) => {
         User.findOne({email:req.body.email}).then((userInstance) => {
-            console.log(userInstance)
             if(!userInstance) 
                 return reject(UserError.UserNotFound()); 
             if(userInstance.userType==="Manager" && userInstance.isAccountActive===false)
                 return reject(UserError.UserNotActive()); 
             
             bcrypt.compare(req.body.password,userInstance.password, function(err, res) {
-                if(res==true){
-                    TokenService.generateToken(userInstance).then(function (token) {
-                        userInstance = userInstance.toObject();
-                        let response = {
-                            userType: userInstance.userType,
-                            token: token
-                        };
-                        let TokenSave=Token({
-                            userId:userInstance._id,
-                            userType: userInstance.userType,
-                            schoolNumber: userInstance.schoolNumber,
-                            token:{
-                                accessToken:token.accessToken
-                            }
-                        })
-                        TokenSave.save();
-                        return resolve(response);
-                    }).catch((err)=>{
+                if(!res)
+                    return reject(SystemError.WrongPassword(err));
+
+                TokenService.generateToken(userInstance).then(function (token) {
+                    userInstance = userInstance.toObject();
+                    let response = {
+                        userType: userInstance.userType,
+                        token: token
+                    };
+                    let TokenSave=Token({
+                        userId:userInstance._id,
+                        userType: userInstance.userType,
+                        schoolNumber: userInstance.schoolNumber,
+                        token:{
+                            accessToken:token.accessToken
+                        }
+                    })
+                    TokenSave
+                    .save()
+                    .catch((err)=>{
                         return reject(SystemError.BusinessException(err)); 
                     })
-                }else{
-                    return reject(SystemError.WrongPassword(err));
-                }
+                    return resolve(response);
+                }).catch((err)=>{
+                    return reject(SystemError.BusinessException(err)); 
+                })
+                
             });
         }).catch((err)=>{
             return reject(SystemError.BusinessException(err)); 
