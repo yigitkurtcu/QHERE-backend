@@ -55,6 +55,7 @@ app.use("/auth", AuthController);
 
 app.use(function (req, res) {
   console.log('IP: ', req.ipInfo);
+  console.log('IP: ', req.headers['x-forwarded-for'] || req.connection.remoteAddress);
   respond.withError(res, SystemError.WrongEndPoint());
 });
 
