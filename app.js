@@ -7,6 +7,7 @@ const http=require('http');
 const socketio=require('socket.io');
 const rateLimit = require("express-rate-limit");
 const requestIp = require('request-ip');
+const helmet = require('helmet');
 
 const UserController = require("./routes/UserController");
 const ManagerController = require("./routes/ManagerController");
@@ -41,7 +42,7 @@ const wrongEndpointlimiter = rateLimit({
   max: 5,
 });
 
-
+app.use(helmet());
 app.use(limiter);
 app.use(logger("dev"));
 app.use(express.json());
