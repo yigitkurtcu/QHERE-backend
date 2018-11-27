@@ -6,6 +6,7 @@ const cors = require("cors");
 const http=require('http');
 const socketio=require('socket.io');
 const rateLimit = require("express-rate-limit");
+const requestIp = require('request-ip');
 
 const UserController = require("./routes/UserController");
 const ManagerController = require("./routes/ManagerController");
@@ -40,6 +41,7 @@ const wrongEndpointlimiter = rateLimit({
   max: 5,
 });
 
+
 app.use(limiter);
 app.use(logger("dev"));
 app.use(express.json());
@@ -55,9 +57,13 @@ app.use("/manager", ManagerController);
 app.use("/student", StudentController);
 app.use("/auth", AuthController);
 
+app.use(requestIp.mw())
+app.use(function(req, res, next) {
+    console.log('IP: ', req.clientIp);
+    next();
+});
 
 app.use(wrongEndpointlimiter, function (req, res) {
-  console.log('IP: ', req.headers['x-forwarded-for'] || req.connection.remoteAddress);
   respond.withError(res, SystemError.WrongEndPoint());
 });
 
