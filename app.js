@@ -35,6 +35,11 @@ const limiter = rateLimit({
   message:"Too many accounts created from this IP, please try again after an hour" 
 });
 
+const wrongEndpointlimiter = rateLimit({
+  windowMs: 20 * 60 * 1000, // 20 minutes
+  max: 5,
+});
+
 app.use(limiter);
 app.use(logger("dev"));
 app.use(express.json());
@@ -51,7 +56,7 @@ app.use("/student", StudentController);
 app.use("/auth", AuthController);
 
 
-app.use(function (req, res) {
+app.use(wrongEndpointlimiter, function (req, res) {
   console.log('IP: ', req.headers['x-forwarded-for'] || req.connection.remoteAddress);
   respond.withError(res, SystemError.WrongEndPoint());
 });
