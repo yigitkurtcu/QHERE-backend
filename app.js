@@ -34,7 +34,7 @@ app.enable("trust proxy"); // only if you're behind a reverse proxy (Heroku, Blu
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
-  message:"Too many accounts created from this IP, please try again after an hour" 
+  message:"Too many requests sended from this IP, please try again later." 
 });
 
 const wrongEndpointlimiter = rateLimit({
@@ -42,7 +42,11 @@ const wrongEndpointlimiter = rateLimit({
   max: 5,
 });
 
-app.use(helmet());
+app.use(helmet({
+  frameguard: {
+    action: 'deny'
+  }
+}));
 app.use(limiter);
 app.use(logger("dev"));
 app.use(express.json());
@@ -50,7 +54,6 @@ app.use(express.urlencoded({
   extended: false
 }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
 app.use("/user", UserController);
