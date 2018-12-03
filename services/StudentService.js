@@ -13,11 +13,11 @@ studentService.getClasses = req => {
   return new Promise(function (resolve, reject) {
     let result = [];
     Class.find({})
-      .then(classes => {
+      .then(classes => {     
         let filteredClasses = classes
+        
         .filter(classInstance => classInstance.lastJoinTime > moment().toDate())
         .filter(classInstance => classInstance.quota > classInstance.students.length)
-
         let callbacks = filteredClasses.length;
         filteredClasses.forEach(classInstance => {
           ClassRequest.findOne({ classId: classInstance._id, studentId: req.tokenData.userId }).then(classReq => {
@@ -188,17 +188,18 @@ studentService.getDiscontinuity = req => {
   return new Promise(function (resolve, reject) {
     var classId = req.params.classId;
     var schoolNumber = req.tokenData.schoolNumber; 
-    var qhereCount = 0, rollCall = 0;
+    var qhereCount = 0, rollCall = 0 , weeksInfo=[];
     Class.findOne({ _id: classId }).then(classInstance => {
       classInstance.qheres.forEach(qhere => {
         qhereCount++;
-        qhere.students.find(student => {
-          student.schoolNumber == schoolNumber ? rollCall++ : null;
-        })
+          qhere.students.find(student => {
+            student.schoolNumber == schoolNumber ? weeksInfo.push({'weekNumber':qhereCount}):null
+          })
       })
       var discontinuity = {
         qhereCount,
-        rollCall
+        rollCall:weeksInfo.length,
+        weeksInfo
       }
       return resolve(discontinuity)
     }).catch(err => {
