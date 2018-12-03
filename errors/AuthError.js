@@ -4,7 +4,7 @@ AuthError.WrongToken = () => {
     return {
         status_code: 400, 
         name : 'Wrong Token',
-        message: 'Token dogrulanamadı.'
+        message: 'Token is not be verified.'
     }
 };
 
