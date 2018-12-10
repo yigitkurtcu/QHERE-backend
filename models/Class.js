@@ -32,7 +32,11 @@ var classSchema = mongoose.Schema({
     userId: String,
     fullName: String,
     email: String,
-    schoolNumber: Number
+    schoolNumber: Number,
+    studentDiscontinuity: {
+      type: Number,
+      default:0
+    }
   }],
   qheres: [{
     number: {
