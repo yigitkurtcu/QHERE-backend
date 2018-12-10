@@ -1,5 +1,4 @@
 const express = require("express");
-const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
@@ -32,18 +31,18 @@ const app = express();
 app.enable("trust proxy"); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
  
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 200, // limit each IP to 200 requests per windowMs
   message:"Too many requests sended from this IP, please try again later." 
 });
 
-const wrongEndpointlimiter = rateLimit({
+const wrongEndPointLimiter = rateLimit({
   windowMs: 20 * 60 * 1000, // 20 minutes
   max: 5,
 });
 
 app.use(helmet({
-  frameguard: {
+  frameGuard: {
     action: 'deny'
   }
 }));
@@ -67,7 +66,7 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.use(wrongEndpointlimiter, function (req, res) {
+app.use(wrongEndPointLimiter, function (req, res) {
   respond.withError(res, SystemError.WrongEndPoint());
 });
 

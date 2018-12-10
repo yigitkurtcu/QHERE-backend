@@ -188,17 +188,17 @@ studentService.getDiscontinuity = req => {
   return new Promise(function (resolve, reject) {
     var classId = req.params.classId;
     var schoolNumber = req.tokenData.schoolNumber; 
-    var qhereCount = 0, rollCall = 0 , weeksInfo=[];
+    var qhereCount = 0, weeksInfo=[];
     Class.findOne({ _id: classId }).then(classInstance => {
       classInstance.qheres.forEach(qhere => {
         qhereCount++;
           qhere.students.find(student => {
-            student.schoolNumber == schoolNumber ? weeksInfo.push({'weekNumber':qhereCount}):null
+            student.schoolNumber == schoolNumber ? weeksInfo.push({'weekNumber':qhereCount}) : null;
           })
       })
       var discontinuity = {
         qhereCount,
-        rollCall:weeksInfo.length,
+        rollCall: weeksInfo.length,
         weeksInfo
       }
       return resolve(discontinuity)
