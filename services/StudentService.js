@@ -64,6 +64,15 @@ studentService.getClasses = req => {
   });
 };
 
+studentService.getRequestClasses=req=>{
+  return new Promise((resolve,reject)=>{
+    ClassRequest.find({studentNumber:req.tokenData.schoolNumber}).then(res=>{
+      return resolve(res);
+    }).catch((err)=>{
+      return reject(SystemError.BusinessException(err))
+    })
+  })
+}
 
 studentService.getUserClasses = req => {
   return new Promise(function (resolve, reject) {
