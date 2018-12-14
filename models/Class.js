@@ -28,8 +28,22 @@ const classSchema = mongoose.Schema({
   description: {
     type: String
   },
-  students: [
-    {
+  students: [{
+    userId: String,
+    fullName: String,
+    email: String,
+    schoolNumber: Number,
+    studentDiscontinuity: {
+      type: Number,
+      default:0
+    }
+  }],
+  qheres: [{
+    number: {
+      type: Number,
+      required: true
+    },
+    students: [{
       userId: String,
       fullName: String,
       email: String,

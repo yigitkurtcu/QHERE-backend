@@ -16,7 +16,17 @@ router.get('/getClasses', verifier.verifyToken, (req, res) => {
     });
 });
 
-router.get('/getUserClasses', verifier.verifyToken, (req, res) => {
+router.get('/getRequestClasses', verifier.verifyToken, function(req, res) {
+  StudentService.getRequestClasses(req)
+    .then(result => {
+      respond.success(res, result);
+    })
+    .catch(err => {
+      respond.withError(res, err);
+    });
+});
+
+router.get('/getUserClasses', verifier.verifyToken, function(req, res) {
   StudentService.getUserClasses(req)
     .then(result => {
       respond.success(res, result);
