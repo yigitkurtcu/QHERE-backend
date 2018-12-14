@@ -71,17 +71,18 @@ studentService.getClasses = req =>
       })
       .catch(err => reject(SystemError.BusinessException(err)));
   });
-};
 
-studentService.getRequestClasses=req=> {
-  return new Promise((resolve,reject)=>{
-    ClassRequest.find({studentNumber:req.tokenData.schoolNumber}).then(res=>{
-      return resolve(res);
-    }).catch((err)=>{
-      return reject(SystemError.BusinessException(err))
-    })
-  })
-}
+studentService.getRequestClasses = req => {
+  return new Promise((resolve, reject) => {
+    ClassRequest.find({ studentNumber: req.tokenData.schoolNumber })
+      .then(res => {
+        return resolve(res);
+      })
+      .catch(err => {
+        return reject(SystemError.BusinessException(err));
+      });
+  });
+};
 
 studentService.getUserClasses = req =>
   new Promise((resolve, reject) => {

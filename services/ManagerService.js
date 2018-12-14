@@ -105,24 +105,33 @@ ManagerService.getClassInfo = req =>
       .then(classInstance => {
         if (classInstance.length === 0) return reject(ManagerError.BadRequest());
 
-        classInstance[0].students.find(instance=>{
-          let discontinuity=0;
+        classInstance[0].students.find(instance => {
+          let discontinuity = 0;
           classInstance[0].qheres.forEach(qhere => {
-              let isEmpty=qhere.students.filter(student=>instance.userId===student._id.toString())
-              if(isEmpty.length===0){
-                discontinuity++;
-              }
-            })
-          Class.findOneAndUpdate({$and:[{_id: req.params.id },{managerId:req.tokenData.userId},{'students.userId':instance.userId}]},{$set:{'students.$.studentDiscontinuity':discontinuity}},{ new: true })
-          .then(instance=>{
-          })
-          })
-          Class.find({$and:[{_id: req.params.id },{managerId:req.tokenData.userId}]})
-            .then(classInstance=>{
-              return resolve(classInstance);
-          })
-
-        
+            let isEmpty = qhere.students.filter(
+              student => instance.userId === student._id.toString()
+            );
+            if (isEmpty.length === 0) {
+              discontinuity++;
+            }
+          });
+          Class.findOneAndUpdate(
+            {
+              $and: [
+                { _id: req.params.id },
+                { managerId: req.tokenData.userId },
+                { 'students.userId': instance.userId }
+              ]
+            },
+            { $set: { 'students.$.studentDiscontinuity': discontinuity } },
+            { new: true }
+          ).then(instance => {});
+        });
+        Class.find({ $and: [{ _id: req.params.id }, { managerId: req.tokenData.userId }] }).then(
+          classInstance => {
+            return resolve(classInstance);
+          }
+        );
       })
       .catch(() => reject(ManagerError.BadRequest()));
   });
