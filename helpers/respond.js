@@ -1,22 +1,19 @@
-const respondSuccess = function (res, data) {
-    return res.status(200).json({
-        status_code: 200,
-        data: data
-    });
+const respondSuccess = function(res, data) {
+  return res.status(200).json({
+    statusCode: 200,
+    data
+  });
 };
 
-const respondWithError = function (res, error, status_code) {
-    if(error != undefined && error.status_code != undefined)
-        status_code = error.status_code
-    else if(status_code == undefined)
-        status_code = 500;
-    return res.status(status_code).json({
-        error
-    })
+const respondWithError = function(res, error, statusCode) {
+  if (error !== undefined && error.statusCode !== undefined) statusCode = error.statusCode;
+  else if (statusCode === undefined) statusCode = 500;
+  return res.status(statusCode).json({
+    error
+  });
 };
-
 
 module.exports = {
-    success: respondSuccess,
-    withError: respondWithError
+  success: respondSuccess,
+  withError: respondWithError
 };

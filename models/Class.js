@@ -1,6 +1,6 @@
-var mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-var classSchema = mongoose.Schema({
+const classSchema = mongoose.Schema({
   managerId: {
     type: String,
     required: true
@@ -28,28 +28,36 @@ var classSchema = mongoose.Schema({
   description: {
     type: String
   },
-  students: [{
-    userId: String,
-    fullName: String,
-    email: String,
-    schoolNumber: Number
-  }],
-  qheres: [{
-    number: {
-      type: Number,
-      required: true
-    },
-    students: [{
+  students: [
+    {
       userId: String,
       fullName: String,
       email: String,
       schoolNumber: Number
-    }]
-  }],
-  notification:[{
-    title:String,
-    content:String,
-    sendDate:Date,
-  }]
+    }
+  ],
+  qheres: [
+    {
+      number: {
+        type: Number,
+        required: true
+      },
+      students: [
+        {
+          userId: String,
+          fullName: String,
+          email: String,
+          schoolNumber: Number
+        }
+      ]
+    }
+  ],
+  notification: [
+    {
+      title: String,
+      content: String,
+      sendDate: Date
+    }
+  ]
 });
-module.exports = mongoose.model("Class", classSchema);
+module.exports = mongoose.model('Class', classSchema);
