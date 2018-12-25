@@ -76,4 +76,14 @@ router.put('/readNotification', verifier.verifyToken, (req, res) => {
     });
 });
 
+router.get('/getNotification', verifier.verifyToken, (req, res) => {
+  StudentService.getNotification(req)
+    .then(result => {
+      respond.success(res, result);
+    })
+    .catch(err => {
+      respond.withError(res, err);
+    });
+});
+
 module.exports = router;

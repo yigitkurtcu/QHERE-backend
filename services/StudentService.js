@@ -236,4 +236,13 @@ studentService.readNotification = req =>
       .catch(err => reject(err));
   });
 
+studentService.getNotification = req =>
+  new Promise((resolve, reject) => {
+    User.findOne({ _id: req.tokenData.userId })
+      .then(instance => {
+        resolve(instance.notification);
+      })
+      .catch(err => reject(err));
+  });
+
 module.exports = studentService;
