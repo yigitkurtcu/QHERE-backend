@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 const mongoose = require('mongoose');
 
 const classSchema = mongoose.Schema({
@@ -54,13 +55,6 @@ const classSchema = mongoose.Schema({
           schoolNumber: Number
         }
       ]
-    }
-  ],
-  notification: [
-    {
-      title: String,
-      content: String,
-      sendDate: Date
     }
   ]
 });

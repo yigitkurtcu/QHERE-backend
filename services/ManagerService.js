@@ -1,4 +1,10 @@
-const _ = require('lodash');
+/* eslint-disable linebreak-style */
+/* eslint-disable object-curly-newline */
+/* eslint-disable linebreak-style */
+/* eslint-disable no-plusplus */
+/* eslint-disable array-callback-return */
+/* eslint-disable no-shadow */
+/* eslint-disable linebreak-style */
 const moment = require('moment');
 const Class = require('../models/Class');
 const User = require('../models/Users');
@@ -108,12 +114,10 @@ ManagerService.getClassInfo = req =>
         classInstance[0].students.find(instance => {
           let discontinuity = 0;
           classInstance[0].qheres.forEach(qhere => {
-            let isEmpty = qhere.students.filter(
+            const isEmpty = qhere.students.filter(
               student => instance.userId === student._id.toString()
             );
-            if (isEmpty.length === 0) {
-              discontinuity++;
-            }
+            if (isEmpty.length === 0) discontinuity++;
           });
           Class.findOneAndUpdate(
             {
@@ -125,12 +129,10 @@ ManagerService.getClassInfo = req =>
             },
             { $set: { 'students.$.studentDiscontinuity': discontinuity } },
             { new: true }
-          ).then(instance => {});
+          ).then(() => {});
         });
         Class.find({ $and: [{ _id: req.params.id }, { managerId: req.tokenData.userId }] }).then(
-          classInstance => {
-            return resolve(classInstance);
-          }
+          classInstance => resolve(classInstance)
         );
       })
       .catch(() => reject(ManagerError.BadRequest()));
@@ -210,17 +212,28 @@ ManagerService.sendNotification = req =>
   new Promise((resolve, reject) => {
     if (req.body.title === '' || req.body.content === '') return reject(ManagerError.FieldEmpty());
     const newReq = {
+      className: req.body.className,
       title: req.body.title,
       content: req.body.content,
       sendDate: moment().toDate()
     };
-    Class.findOneAndUpdate(
-      { $and: [{ _id: req.body.id }, { managerId: req.tokenData.userId }] },
-      { $push: { notification: newReq } },
-      { new: true }
-    )
-      .then(instance => resolve(instance))
-      .catch(err => reject(err));
+    Class.findOne({ _id: req.body.id }).then(instance => {
+      instance.students.map(
+        student =>
+          User.findOneAndUpdate(
+            { _id: student.userId },
+            { $push: { notification: newReq } },
+            { new: true }
+          )
+            .then(() => {
+              resolve(newReq);
+            })
+            .catch(err => {
+              reject(err);
+            })
+        // eslint-disable-next-line function-paren-newline
+      );
+    });
   });
 
 module.exports = ManagerService;
