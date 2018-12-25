@@ -2,7 +2,7 @@
   "env": {
     "node": true
   },
-  "extends": "airbnb-base",
+  "extends": ["airbnb-base"],
   "plugins": ["prettier"],
   "rules": {
     "arrow-parens": ["error", "as-needed"],
@@ -13,7 +13,7 @@
     "space-before-function-paren": ["error", "never"],
     "max-len": ["error", { "code": 100 }],
     "no-param-reassign": 0,
-    "no-underscore-dangle": 0,
+    "no-underscore-dangle": ["error", { "allow": ["_id"] }],
     "no-new": 0,
     "nonblock-statement-body-position": 0,
     "prefer-destructuring": 0
