@@ -1,10 +1,7 @@
-/* eslint-disable linebreak-style */
 /* eslint-disable object-curly-newline */
-/* eslint-disable linebreak-style */
+/* eslint-disable function-paren-newline */
 /* eslint-disable no-plusplus */
 /* eslint-disable array-callback-return */
-/* eslint-disable no-shadow */
-/* eslint-disable linebreak-style */
 const moment = require('moment');
 const Class = require('../models/Class');
 const User = require('../models/Users');
@@ -132,7 +129,7 @@ ManagerService.getClassInfo = req =>
           ).then(() => {});
         });
         Class.find({ $and: [{ _id: req.params.id }, { managerId: req.tokenData.userId }] }).then(
-          classInstance => resolve(classInstance)
+          resolve(classInstance)
         );
       })
       .catch(() => reject(ManagerError.BadRequest()));
@@ -218,20 +215,18 @@ ManagerService.sendNotification = req =>
       sendDate: moment().toDate()
     };
     Class.findOne({ _id: req.body.id }).then(instance => {
-      instance.students.map(
-        student =>
-          User.findOneAndUpdate(
-            { _id: student.userId },
-            { $push: { notification: newReq } },
-            { new: true }
-          )
-            .then(() => {
-              resolve(newReq);
-            })
-            .catch(err => {
-              reject(err);
-            })
-        // eslint-disable-next-line function-paren-newline
+      instance.students.map(student =>
+        User.findOneAndUpdate(
+          { _id: student.userId },
+          { $push: { notification: newReq } },
+          { new: true }
+        )
+          .then(() => {
+            resolve(newReq);
+          })
+          .catch(err => {
+            reject(err);
+          })
       );
     });
   });

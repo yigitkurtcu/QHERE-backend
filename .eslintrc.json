@@ -5,6 +5,7 @@
   "extends": "airbnb-base",
   "plugins": ["prettier"],
   "rules": {
+    "linebreak-style": 0,
     "arrow-parens": ["error", "as-needed"],
     "comma-dangle": ["error", "never"],
     "consistent-return": 0,
