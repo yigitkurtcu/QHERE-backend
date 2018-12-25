@@ -232,15 +232,23 @@ studentService.readNotification = req =>
       { $set: { 'notification.$.isRead': 'true' } },
       { new: true }
     )
-      .then(instance => resolve(instance.notification))
+      .then(instance => {
+        instance.notification.map(not => {
+          if (JSON.stringify(not._id) === `"` + req.body.id + `"`) return resolve(not);
+        });
+      })
       .catch(err => reject(err));
   });
 
 studentService.getNotification = req =>
   new Promise((resolve, reject) => {
+    const notification = [];
     User.findOne({ _id: req.tokenData.userId })
       .then(instance => {
-        resolve(instance.notification);
+        instance.notification.map(not => {
+          if (not.isRead === false) notification.push(not);
+        });
+        resolve(notification);
       })
       .catch(err => reject(err));
   });
