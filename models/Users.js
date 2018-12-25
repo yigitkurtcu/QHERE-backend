@@ -30,7 +30,19 @@ const UserSchema = Schema({
   isAccountActive: {
     type: Boolean,
     default: false
-  }
+  },
+  notification: [
+    {
+      className: String,
+      title: String,
+      content: String,
+      sendDate: Date,
+      isRead: {
+        type: Boolean,
+        default: false
+      }
+    }
+  ]
 });
 
 module.exports = mongoose.model('user', UserSchema);

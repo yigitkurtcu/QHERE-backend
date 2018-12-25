@@ -16,7 +16,7 @@ router.get('/getClasses', verifier.verifyToken, (req, res) => {
     });
 });
 
-router.get('/getRequestClasses', verifier.verifyToken, function(req, res) {
+router.get('/getRequestClasses', verifier.verifyToken, (req, res) => {
   StudentService.getRequestClasses(req)
     .then(result => {
       respond.success(res, result);
@@ -26,7 +26,7 @@ router.get('/getRequestClasses', verifier.verifyToken, function(req, res) {
     });
 });
 
-router.get('/getUserClasses', verifier.verifyToken, function(req, res) {
+router.get('/getUserClasses', verifier.verifyToken, (req, res) => {
   StudentService.getUserClasses(req)
     .then(result => {
       respond.success(res, result);
@@ -58,6 +58,16 @@ router.post('/:classId/joinRollCall/:qhereId', verifier.verifyToken, (req, res) 
 
 router.get('/:classId/getDiscontinuity', verifier.verifyToken, (req, res) => {
   StudentService.getDiscontinuity(req)
+    .then(result => {
+      respond.success(res, result);
+    })
+    .catch(err => {
+      respond.withError(res, err);
+    });
+});
+
+router.put('/readNotification', verifier.verifyToken, (req, res) => {
+  StudentService.readNotification(req)
     .then(result => {
       respond.success(res, result);
     })
