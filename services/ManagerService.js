@@ -241,13 +241,4 @@ ManagerService.sendNotification = req =>
       });
   });
 
-ManagerService.getNotification = req =>
-  new Promise((resolve, reject) => {
-    Class.findOne({ _id: req.params.id })
-      .then(instance => {
-        resolve(instance.notification);
-      })
-      .catch(err => reject(err));
-  });
-
 module.exports = ManagerService;
