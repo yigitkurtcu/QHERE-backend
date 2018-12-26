@@ -22,7 +22,7 @@ UserService.login = req =>
           return reject(UserError.UserNotActive());
 
         bcrypt.compare(req.body.password, userInstance.password, (error, res) => {
-          if (!res) return reject(SystemError.WrongPassword(error));
+          if (!res) return reject(UserError.WrongPassword(error));
 
           TokenService.generateToken(userInstance)
             .then(token => {
