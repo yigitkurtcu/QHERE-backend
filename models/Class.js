@@ -55,6 +55,13 @@ const classSchema = mongoose.Schema({
         }
       ]
     }
+  ],
+  notification: [
+    {
+      title: String,
+      content: String,
+      sendDate: Date
+    }
   ]
 });
 module.exports = mongoose.model('Class', classSchema);

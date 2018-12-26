@@ -214,21 +214,40 @@ ManagerService.sendNotification = req =>
       content: req.body.content,
       sendDate: moment().toDate()
     };
-    Class.findOne({ _id: req.body.id }).then(instance => {
-      instance.students.map(student =>
-        User.findOneAndUpdate(
-          { _id: student.userId },
-          { $push: { notification: newReq } },
-          { new: true }
-        )
-          .then(() => {
-            resolve(newReq);
-          })
-          .catch(err => {
-            reject(err);
-          })
-      );
-    });
+    Class.findOneAndUpdate(
+      { $and: [{ _id: req.body.id }, { managerId: req.tokenData.userId }] },
+      { $push: { notification: newReq } },
+      { new: true }
+    )
+      .then(() => {
+        Class.findOne({ _id: req.body.id }).then(instance => {
+          instance.students.map(student =>
+            User.findOneAndUpdate(
+              { _id: student.userId },
+              { $push: { notification: newReq } },
+              { new: true }
+            )
+              .then(() => {
+                resolve(newReq);
+              })
+              .catch(err => {
+                reject(err);
+              })
+          );
+        });
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
+
+ManagerService.getNotification = req =>
+  new Promise((resolve, reject) => {
+    Class.findOne({ _id: req.params.id })
+      .then(instance => {
+        resolve(instance.notification);
+      })
+      .catch(err => reject(err));
   });
 
 module.exports = ManagerService;
