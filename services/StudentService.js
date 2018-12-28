@@ -242,13 +242,9 @@ studentService.readNotification = req =>
 
 studentService.getNotification = req =>
   new Promise((resolve, reject) => {
-    const notification = [];
     User.findOne({ _id: req.tokenData.userId })
       .then(instance => {
-        instance.notification.map(not => {
-          if (not.isRead === false) notification.push(not);
-        });
-        resolve(notification);
+        resolve(instance.notification);
       })
       .catch(err => reject(err));
   });
