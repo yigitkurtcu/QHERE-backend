@@ -31,12 +31,6 @@ const app = express();
 app.enable('trust proxy');
 
 const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 200, // limit each IP to 200 requests per windowMs
-  message: 'Too many requests sended from this IP, please try again later.'
-});
-
-const wrongEndPointLimiter = rateLimit({
   windowMs: 20 * 60 * 1000, // 20 minutes
   max: 5
 });
@@ -48,7 +42,7 @@ app.use(
     }
   })
 );
-app.use(limiter);
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(
@@ -70,7 +64,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(wrongEndPointLimiter, (req, res) => {
+app.use(limiter, (req, res) => {
   respond.withError(res, SystemError.WrongEndPoint());
 });
 
