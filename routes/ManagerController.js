@@ -115,4 +115,14 @@ router.post('/sendNotification', [verifier.verifyToken, verifier.verifyManager],
     });
 });
 
+router.get('/makeReport/:id', [verifier.verifyToken, verifier.verifyManager], (req, res) => {
+  ManagerService.makeReport(req)
+    .then(result => {
+      respond.success(res, result);
+    })
+    .catch(err => {
+      respond.withError(res, err);
+    });
+});
+
 module.exports = router;

@@ -241,4 +241,15 @@ ManagerService.sendNotification = req =>
       });
   });
 
+ManagerService.makeReport = req =>
+  new Promise((resolve, reject) => {
+    let result = [];
+    Class.findOne({ _id: req.params.id }, 'qheres')
+      .then(instance => {
+        instance.qheres.map(qhere => result.push({ studentCount: qhere.students.length }));
+        return resolve(result);
+      })
+      .catch(err => reject(err));
+  });
+
 module.exports = ManagerService;
