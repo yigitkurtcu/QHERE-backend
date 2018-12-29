@@ -2,7 +2,7 @@ const SystemError = {};
 
 SystemError.BusinessException = (err) => {
     return {
-        status_code: 400, 
+        status_code: 500, 
         name : 'BussinesException',
         message: err || 'BusinessException'
     }
@@ -10,7 +10,7 @@ SystemError.BusinessException = (err) => {
 
 SystemError.WrongEndPoint = () => {
     return {
-        status_code: 400, 
+        status_code: 404, 
         name : 'WrongEndPoint',
         message: 'This endpoint is wrong!'
     }

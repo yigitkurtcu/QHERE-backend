@@ -222,7 +222,7 @@ ManagerService.getQrInfo=(req)=>{
 
 ManagerService.sendNotification=(req)=>{
   return new Promise((resolve,reject)=>{
-    if(req.body.title==="" || req.body.content==="")
+    if(!req.body.title || !req.body.content)
       return reject (ManagerError.FieldEmpty());
     const newReq ={
       title:req.body.title,
@@ -230,7 +230,7 @@ ManagerService.sendNotification=(req)=>{
       sendDate:moment().toDate()
     }
     Class.findOneAndUpdate({$and:[{_id:req.body.id},{managerId:req.tokenData.userId}]},{ $push:{notification:newReq}},{new:true}).then((instance)=>{
-      return resolve (instance);
+      return resolve(instance);
     }).catch((err)=>{
       return reject(err);
     })
