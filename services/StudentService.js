@@ -1,220 +1,252 @@
-const _ = require("lodash");
-var moment = require("moment");
-const Class = require("../models/Class");
-const User = require("../models/Users");
-const ClassRequest = require("../models/ClassRequest");
-const RejectedRequest = require("../models/RejectedRequest");
-const SystemError = require("../errors/SystemError");
-const StudentError = require("../errors/StudentError");
-var socket = require('socket.io-client')('http://localhost:3001/');
-studentService = {};
+const _ = require('lodash');
+const moment = require('moment');
+const socket = require('socket.io-client')('http://localhost:3001/');
+const Class = require('../models/Class');
+const User = require('../models/Users');
+const ClassRequest = require('../models/ClassRequest');
+const RejectedRequest = require('../models/RejectedRequest');
+const SystemError = require('../errors/SystemError');
+const StudentError = require('../errors/StudentError');
 
-studentService.getClasses = req => {
-  return new Promise(function (resolve, reject) {
+const studentService = {};
+
+studentService.getClasses = req =>
+  new Promise((resolve, reject) => {
     let result = [];
     Class.find({})
-      .then(classes => {     
-        let filteredClasses = classes
-        
-        .filter(classInstance => classInstance.lastJoinTime > moment().toDate())
-        .filter(classInstance => classInstance.quota > classInstance.students.length)
+      .then(classes => {
+        const filteredClasses = classes
+
+          .filter(classInstance => classInstance.lastJoinTime > moment().toDate())
+          .filter(classInstance => classInstance.quota > classInstance.students.length);
         let callbacks = filteredClasses.length;
         filteredClasses.forEach(classInstance => {
-          ClassRequest.findOne({ classId: classInstance._id, studentId: req.tokenData.userId }).then(classReq => {
-            RejectedRequest.findOne({ classId: classInstance._id, studentId: req.tokenData.userId }).then(rejectedReq => {
-              Class.findOne({ _id: classInstance._id }).then(classLastInstance => {
-                if(!(classLastInstance.students.find(student => student.userId == req.tokenData.userId)) && !classReq && !rejectedReq){
-                  result.push(classInstance);
-                  callbacks--;
-                }else
-                  callbacks--;
-                
+          ClassRequest.findOne({
+            classId: classInstance._id,
+            studentId: req.tokenData.userId
+          })
+            .then(classReq => {
+              RejectedRequest.findOne({
+                classId: classInstance._id,
+                studentId: req.tokenData.userId
+              })
+                .then(rejectedReq => {
+                  Class.findOne({ _id: classInstance._id })
+                    .then(classLastInstance => {
+                      if (
+                        !classLastInstance.students.find(
+                          student => student.userId === req.tokenData.userId
+                        ) &&
+                        !classReq &&
+                        !rejectedReq
+                      ) {
+                        result.push(classInstance);
+                        callbacks--;
+                      } else callbacks--;
 
-                if(callbacks == 0){
-                  result = result.map(x =>
-                    _.pick(x, [
-                      "_id",
-                      "managerId",
-                      "className",
-                      "joinTime",
-                      "quota",
-                      "discontinuity",
-                      "description",
-                      "managerName",
-                      "lastJoinTime"
-                    ])
-                  );
-                  return resolve(result);
-                }
-              }).catch(err => {
-                return reject(SystemError.BusinessException(err));
-              });  
-            }).catch(err => {
-              return reject(SystemError.BusinessException(err));
-            });  
-          }).catch(err => {
-            return reject(SystemError.BusinessException(err));
-          });
-        })
-
+                      if (callbacks === 0) {
+                        result = result.map(x =>
+                          _.pick(x, [
+                            '_id',
+                            'managerId',
+                            'className',
+                            'joinTime',
+                            'quota',
+                            'discontinuity',
+                            'description',
+                            'managerName',
+                            'lastJoinTime'
+                          ])
+                        );
+                        return resolve(result);
+                      }
+                    })
+                    .catch(err => reject(SystemError.BusinessException(err)));
+                })
+                .catch(err => reject(SystemError.BusinessException(err)));
+            })
+            .catch(err => reject(SystemError.BusinessException(err)));
+        });
       })
-      .catch(err => {
-        return reject(SystemError.BusinessException(err));
-      });
+      .catch(err => reject(SystemError.BusinessException(err)));
   });
-};
 
-studentService.getRequestClasses=req=>{
-  return new Promise((resolve,reject)=>{
-    ClassRequest.find({studentNumber:req.tokenData.schoolNumber}).then(res=>{
-      return resolve(res);
-    }).catch((err)=>{
-      return reject(SystemError.BusinessException(err))
-    })
-  })
-}
+studentService.getRequestClasses = req =>
+  new Promise((resolve, reject) => {
+    ClassRequest.find({ studentNumber: req.tokenData.schoolNumber })
+      .then(res => resolve(res))
+      .catch(err => reject(SystemError.BusinessException(err)));
+  });
 
-studentService.getUserClasses = req => {
-  return new Promise(function (resolve, reject) {
-    Class.find({ "students.schoolNumber": req.tokenData.schoolNumber })
+studentService.getUserClasses = req =>
+  new Promise((resolve, reject) => {
+    Class.find({ 'students.schoolNumber': req.tokenData.schoolNumber })
       .then(res => {
-        var result = res.map(x =>
+        const result = res.map(x =>
           _.pick(x, [
-            "_id",
-            "managerId",
-            "className",
-            "joinTime",
-            "quota",
-            "discontinuity",
-            "description",
-            "managerName"
+            '_id',
+            'managerId',
+            'className',
+            'joinTime',
+            'quota',
+            'discontinuity',
+            'description',
+            'managerName'
           ])
         );
         return resolve(result);
       })
-      .catch(err => {
-
-        return reject(SystemError.BusinessException(err));
-      });
+      .catch(err => reject(SystemError.BusinessException(err)));
   });
-};
 
-studentService.joinClass = req => {
-  return new Promise(function (resolve, reject) {
+studentService.joinClass = req =>
+  new Promise((resolve, reject) => {
     ClassRequest.find({
-        classId: req.params.id,
-        studentId: req.tokenData.userId
+      classId: req.params.id,
+      studentId: req.tokenData.userId
     })
-    .then(res => {
-      if (res.length > 0)  //Check class for student request
-        return reject(StudentError.StudentAlreadyRequested())
+      .then(res => {
+        // Check class for student request
+        if (res.length > 0) return reject(StudentError.StudentAlreadyRequested());
 
-      RejectedRequest.find({
-        classId: req.params.id,
-        studentId: req.tokenData.userId
-      }).then(rejected => {
-        if (rejected.length > 0)  //Check class for student request
-          return reject(StudentError.Rejected())
-        
-      Class.findOne({ _id: req.params.id }).then(classInstance => {
-        if(classInstance.lastJoinTime<moment().toDate())
-          return reject(StudentError.Expired());
-        var studentId = classInstance.students.find(student => student.userId === req.tokenData.userId) //Check class for student
-        if (studentId) 
-          return reject(StudentError.StudentAlreadyJoin())
+        RejectedRequest.find({
+          classId: req.params.id,
+          studentId: req.tokenData.userId
+        })
+          .then(rejected => {
+            // Check class for student request
+            if (rejected.length > 0) return reject(StudentError.Rejected());
 
-        if(classInstance.quota == classInstance.students.length)  //Check class quota
-          return reject(StudentError.ClassFull())
+            Class.findOne({ _id: req.params.id })
+              .then(classInstance => {
+                if (classInstance.lastJoinTime < moment().toDate())
+                  return reject(StudentError.Expired());
+                const studentId = classInstance.students.find(
+                  student => student.userId === req.tokenData.userId
+                );
+                // Check class for student
+                if (studentId) return reject(StudentError.StudentAlreadyJoin());
 
-        User.findOne({ _id: req.tokenData.userId })
-          .then(userInstance => {
-            var classReq = new ClassRequest({
-              'managerId': classInstance.managerId,
-              'managerName': classInstance.managerName,
-              'classId': req.params.id,
-              'className': classInstance.className,
-              'studentId': req.tokenData.userId,
-              'studentName': userInstance.fullName,
-              'studentNumber':req.tokenData.schoolNumber,
-              'requestDate': moment().toDate()
-            });
+                if (classInstance.quota === classInstance.students.length)
+                  return reject(StudentError.ClassFull()); // Check class quota
 
-            classReq.save()
-            .then(instance => {
-              return resolve(instance);
-            }).catch(err => {
-              return reject(SystemError.BusinessException(err));
-            })
-          }).catch(err => {
-            return reject(SystemError.BusinessException(err));
+                User.findOne({ _id: req.tokenData.userId })
+                  .then(userInstance => {
+                    const classReq = new ClassRequest({
+                      managerId: classInstance.managerId,
+                      managerName: classInstance.managerName,
+                      classId: req.params.id,
+                      className: classInstance.className,
+                      studentId: req.tokenData.userId,
+                      studentName: userInstance.fullName,
+                      studentNumber: req.tokenData.schoolNumber,
+                      requestDate: moment().toDate()
+                    });
+
+                    classReq
+                      .save()
+                      .then(instance => resolve(instance))
+                      .catch(err => reject(SystemError.BusinessException(err)));
+                  })
+                  .catch(err => reject(SystemError.BusinessException(err)));
+              })
+              .catch(err => reject(SystemError.BusinessException(err)));
           })
-        }).catch(err => {
-          return reject(SystemError.BusinessException(err));
-        })
-      }).catch(err => {
-        return reject(SystemError.BusinessException(err));
-      })    
-    }).catch(err => {
-      return reject(SystemError.BusinessException(err));
-    })
-  })
-};
-
-studentService.joinRollCall = req => {
-  return new Promise(function (resolve, reject) {
-    var classId = req.params.classId; 
-    var qhereId = req.params.qhereId;
-    var studentId = req.tokenData.userId; 
-
-    User.findOne({ _id: studentId }).then(userInstance => {
-      Class.findOne({ _id: classId }).then(classInstance => {
-        if(!(classInstance.students.find(student => student.userId == studentId))) //Check is user joined class
-          return reject(StudentError.notInClass())
-
-        var qhereInstance = classInstance.qheres.find(qhere => qhere._id == qhereId)
-        
-        if(qhereInstance.students.find(student => student._id == studentId)) //Check user is already joined roll call
-          return reject(StudentError.StudentAlreadyJoinRollCall())
-
-        qhereInstance.students.push(userInstance);
-        classInstance.qheres[qhereInstance.number - 1] = qhereInstance
-        Class.findOneAndUpdate({ _id: classId }, {qheres: classInstance.qheres}, {new: true}).then(updatedClass => {
-          socket.emit('approveClass',{ classId:classId, fullName:userInstance.fullName,schoolNumber:userInstance.schoolNumber });
-          return resolve(updatedClass)
-        }).catch(err => {
-        return reject(err)
-        })
-      }).catch(err => {
-        return reject(err)
+          .catch(err => reject(SystemError.BusinessException(err)));
       })
-    }).catch(err => {
-      return reject(err)
-    })
-  })
-};
+      .catch(err => reject(SystemError.BusinessException(err)));
+  });
 
-studentService.getDiscontinuity = req => {
-  return new Promise(function (resolve, reject) {
-    var classId = req.params.classId;
-    var schoolNumber = req.tokenData.schoolNumber; 
-    var qhereCount = 0, weeksInfo=[];
-    Class.findOne({ _id: classId }).then(classInstance => {
-      classInstance.qheres.forEach(qhere => {
-        qhereCount++;
+studentService.joinRollCall = req =>
+  new Promise((resolve, reject) => {
+    const classId = req.params.classId;
+    const qhereId = req.params.qhereId;
+    const studentId = req.tokenData.userId;
+
+    User.findOne({ _id: studentId })
+      .then(userInstance => {
+        Class.findOne({ _id: classId })
+          .then(classInstance => {
+            if (!classInstance.students.find(student => student.userId === studentId))
+              return reject(StudentError.notInClass());
+
+            const qhereInstance = classInstance.qheres.find(qhere => qhere._id === qhereId);
+
+            if (qhereInstance.students.find(student => student._id === studentId))
+              return reject(StudentError.StudentAlreadyJoinRollCall());
+
+            qhereInstance.students.push(userInstance);
+            classInstance.qheres[qhereInstance.number - 1] = qhereInstance;
+            Class.findOneAndUpdate(
+              { _id: classId },
+              { qheres: classInstance.qheres },
+              { new: true }
+            )
+              .then(updatedClass => {
+                socket.emit('approveClass', {
+                  classId,
+                  fullName: userInstance.fullName,
+                  schoolNumber: userInstance.schoolNumber
+                });
+                return resolve(updatedClass);
+              })
+              .catch(err => reject(err));
+          })
+          .catch(err => reject(err));
+      })
+      .catch(err => reject(err));
+  });
+
+studentService.getDiscontinuity = req =>
+  new Promise((resolve, reject) => {
+    const classId = req.params.classId;
+    const schoolNumber = req.tokenData.schoolNumber;
+    let qhereCount = 0;
+    const weeksInfo = [];
+    Class.findOne({ _id: classId })
+      .then(classInstance => {
+        classInstance.qheres.forEach(qhere => {
+          qhereCount++;
           qhere.students.find(student => {
-            student.schoolNumber == schoolNumber ? weeksInfo.push({'weekNumber':qhereCount}) : null;
-          })
+            student.schoolNumber === schoolNumber
+              ? weeksInfo.push({ weekNumber: qhereCount })
+              : null;
+          });
+        });
+        const discontinuity = {
+          qhereCount,
+          rollCall: weeksInfo.length,
+          weeksInfo
+        };
+        return resolve(discontinuity);
       })
-      var discontinuity = {
-        qhereCount,
-        rollCall: weeksInfo.length,
-        weeksInfo
-      }
-      return resolve(discontinuity)
-    }).catch(err => {
-      return reject(SystemError.BusinessException(err));
-    })
-  })
-};
+      .catch(err => reject(SystemError.BusinessException(err)));
+  });
+
+studentService.readNotification = req =>
+  new Promise((resolve, reject) => {
+    User.findOneAndUpdate(
+      {
+        $and: [{ _id: req.tokenData.userId }, { 'notification._id': req.body.id }]
+      },
+      { $set: { 'notification.$.isRead': 'true' } },
+      { new: true }
+    )
+      .then(instance => {
+        instance.notification.map(not => {
+          if (JSON.stringify(not._id) === `"` + req.body.id + `"`) return resolve(not);
+        });
+      })
+      .catch(err => reject(err));
+  });
+
+studentService.getNotification = req =>
+  new Promise((resolve, reject) => {
+    User.findOne({ _id: req.tokenData.userId })
+      .then(instance => {
+        resolve(instance.notification);
+      })
+      .catch(err => reject(err));
+  });
 
 module.exports = studentService;

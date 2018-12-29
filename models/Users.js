@@ -1,9 +1,10 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+
 const Schema = mongoose.Schema;
 
 const UserSchema = Schema({
   schoolNumber: {
-    type: Number,
+    type: Number
   },
   fullName: {
     type: String,
@@ -19,17 +20,29 @@ const UserSchema = Schema({
   },
   gender: {
     type: String,
-    enum: ["Erkek", "Kadın", "Diğer"]
+    enum: ['Erkek', 'Kadın', 'Diğer']
   },
   userType: {
     type: String,
-    enum: ["Manager", "Student"],
-    default: "Student"
+    enum: ['Manager', 'Student'],
+    default: 'Student'
   },
   isAccountActive: {
     type: Boolean,
     default: false
-  }
+  },
+  notification: [
+    {
+      className: String,
+      title: String,
+      content: String,
+      sendDate: Date,
+      isRead: {
+        type: Boolean,
+        default: false
+      }
+    }
+  ]
 });
 
-module.exports = mongoose.model("user", UserSchema);
+module.exports = mongoose.model('user', UserSchema);
