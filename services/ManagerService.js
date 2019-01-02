@@ -114,7 +114,7 @@ ManagerService.getClassInfo = req =>
             const isEmpty = qhere.students.filter(
               student => instance.userId === student._id.toString()
             );
-            if (isEmpty.length === 0) discontinuity++;
+            if (isEmpty.length !== 0) discontinuity++;
           });
           Class.findOneAndUpdate(
             {
