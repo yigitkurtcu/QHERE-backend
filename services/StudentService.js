@@ -35,7 +35,7 @@ studentService.getClasses = req =>
                     .then(classLastInstance => {
                       if (
                         !classLastInstance.students.find(
-                          student => student.userId === req.tokenData.userId
+                          student => student.userId == req.tokenData.userId
                         ) &&
                         !classReq &&
                         !rejectedReq
@@ -44,7 +44,7 @@ studentService.getClasses = req =>
                         callbacks--;
                       } else callbacks--;
 
-                      if (callbacks === 0) {
+                      if (callbacks == 0) {
                         result = result.map(x =>
                           _.pick(x, [
                             '_id',
@@ -122,12 +122,12 @@ studentService.joinClass = req =>
                 if (classInstance.lastJoinTime < moment().toDate())
                   return reject(StudentError.Expired());
                 const studentId = classInstance.students.find(
-                  student => student.userId === req.tokenData.userId
+                  student => student.userId == req.tokenData.userId
                 );
                 // Check class for student
                 if (studentId) return reject(StudentError.StudentAlreadyJoin());
 
-                if (classInstance.quota === classInstance.students.length)
+                if (classInstance.quota == classInstance.students.length)
                   return reject(StudentError.ClassFull()); // Check class quota
 
                 User.findOne({ _id: req.tokenData.userId })
@@ -162,17 +162,15 @@ studentService.joinRollCall = req =>
     const classId = req.params.classId;
     const qhereId = req.params.qhereId;
     const studentId = req.tokenData.userId;
-
     User.findOne({ _id: studentId })
       .then(userInstance => {
         Class.findOne({ _id: classId })
           .then(classInstance => {
-            if (!classInstance.students.find(student => student.userId === studentId))
+            if (!classInstance.students.find(student => student.userId == studentId))
               return reject(StudentError.notInClass());
 
-            const qhereInstance = classInstance.qheres.find(qhere => qhere._id === qhereId);
-
-            if (qhereInstance.students.find(student => student._id === studentId))
+            const qhereInstance = classInstance.qheres.find(qhere => qhere._id == qhereId);
+            if (qhereInstance.students.find(student => student._id == studentId))
               return reject(StudentError.StudentAlreadyJoinRollCall());
 
             qhereInstance.students.push(userInstance);
@@ -190,11 +188,20 @@ studentService.joinRollCall = req =>
                 });
                 return resolve(updatedClass);
               })
-              .catch(err => reject(err));
+              .catch(err => {
+                console.log(err);
+                reject(err);
+              });
           })
-          .catch(err => reject(err));
+          .catch(err => {
+            console.log(err);
+            reject(err);
+          });
       })
-      .catch(err => reject(err));
+      .catch(err => {
+        console.log(err);
+        reject(err);
+      });
   });
 
 studentService.getDiscontinuity = req =>
@@ -208,7 +215,7 @@ studentService.getDiscontinuity = req =>
         classInstance.qheres.forEach(qhere => {
           qhereCount++;
           qhere.students.find(student => {
-            student.schoolNumber === schoolNumber
+            student.schoolNumber == schoolNumber
               ? weeksInfo.push({ weekNumber: qhereCount })
               : null;
           });
@@ -234,7 +241,7 @@ studentService.readNotification = req =>
     )
       .then(instance => {
         instance.notification.map(not => {
-          if (JSON.stringify(not._id) === `"` + req.body.id + `"`) return resolve(not);
+          if (JSON.stringify(not._id) == `"` + req.body.id + `"`) return resolve(not);
         });
       })
       .catch(err => reject(err));

@@ -46,7 +46,7 @@ tokenService.removeToken = function(token) {
   return new Promise((resolve, reject) => {
     Token.findOneAndDelete({ 'token.accessToken': token })
       .then(data => {
-        if (data === null) return resolve('Böyle bir token yok');
+        if (data == null) return resolve('Böyle bir token yok');
 
         return resolve('Başarılı bir şekilde token silindi');
       })

@@ -5,13 +5,13 @@ module.exports = io => {
     socket.on('createClass', data => {
       let isRoom = true;
       Object.keys(socket.rooms).forEach(key => {
-        if (key === data.classId) {
+        if (key == data.classId) {
           console.log('bu id adında ders bulunmaktadır');
           console.log(socket.rooms);
           isRoom = false;
         }
       });
-      if (isRoom === true)
+      if (isRoom == true)
         socket.join(data.classId, () => {
           console.log('ders olusturdunuz');
           console.log(socket.rooms);

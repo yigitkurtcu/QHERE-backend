@@ -18,7 +18,7 @@ UserService.login = req =>
     User.findOne({ email: req.body.email })
       .then(userInstance => {
         if (!userInstance) return reject(UserError.UserNotFound());
-        if (userInstance.userType === 'Manager' && userInstance.isAccountActive === false)
+        if (userInstance.userType == 'Manager' && userInstance.isAccountActive == false)
           return reject(UserError.UserNotActive());
 
         bcrypt.compare(req.body.password, userInstance.password, (error, res) => {
@@ -51,7 +51,7 @@ UserService.login = req =>
 
 UserService.register = req =>
   new Promise((resolve, reject) => {
-    if (req.body.userType === 'Student' && req.body.schoolNumber === '')
+    if (req.body.userType == 'Student' && req.body.schoolNumber == '')
       return reject(UserError.UserSchoolNumber());
 
     User.findOne({ schoolNumber: req.body.schoolNumber }).then(user => {

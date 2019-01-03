@@ -40,7 +40,7 @@ ManagerService.approveStudents = req =>
       $and: [{ _id: req.params.id }, { managerId: req.tokenData.userId }]
     })
       .then(approveStudent => {
-        if (approveStudent === null) return reject(ManagerError.ClassRequestNotFound());
+        if (approveStudent == null) return reject(ManagerError.ClassRequestNotFound());
 
         User.findOne({ _id: approveStudent.studentId })
           .then(instance => {
@@ -77,7 +77,7 @@ ManagerService.rejectStudents = req =>
       $and: [{ _id: req.params.id }, { managerId: req.tokenData.userId }]
     })
       .then(rejectStudent => {
-        if (rejectStudent === null) return reject(ManagerError.BadRequest());
+        if (rejectStudent == null) return reject(ManagerError.BadRequest());
 
         const rejectedStudent = RejectedRequest({
           classId: rejectStudent.classId,
@@ -106,13 +106,13 @@ ManagerService.getClassInfo = req =>
       $and: [{ _id: req.params.id }, { managerId: req.tokenData.userId }]
     })
       .then(classInstance => {
-        if (classInstance.length === 0) return reject(ManagerError.BadRequest());
+        if (classInstance.length == 0) return reject(ManagerError.BadRequest());
 
         classInstance[0].students.find(instance => {
           let discontinuity = 0;
           classInstance[0].qheres.forEach(qhere => {
             const isEmpty = qhere.students.filter(
-              student => instance.userId === student._id.toString()
+              student => instance.userId == student._id.toString()
             );
             if (isEmpty.length !== 0) discontinuity++;
           });
@@ -148,7 +148,7 @@ ManagerService.deleteClass = req =>
       $and: [{ _id: req.params.id }, { managerId: req.tokenData.userId }]
     })
       .then(classInstance => {
-        if (classInstance === null)
+        if (classInstance == null)
           return reject(SystemError.BusinessException('Böyle bir ders bulunmamaktadır.'));
 
         return resolve(classInstance);
@@ -164,7 +164,7 @@ ManagerService.updateClass = req =>
       { new: true }
     )
       .then(instance => {
-        if (instance === null) return reject(ManagerError.BadRequest());
+        if (instance == null) return reject(ManagerError.BadRequest());
 
         return resolve(instance);
       })
@@ -177,7 +177,7 @@ ManagerService.createQr = req =>
       $and: [{ _id: req.body.classId }, { managerId: req.tokenData.userId }]
     })
       .then(instance => {
-        if (instance === null || instance.qheres.length === 15)
+        if (instance == null || instance.qheres.length == 15)
           return reject(ManagerError.BadRequest());
 
         Class.findOneAndUpdate(
@@ -197,9 +197,9 @@ ManagerService.getQrInfo = req =>
       $and: [{ 'qheres._id': { _id: req.params.id } }, { managerId: req.tokenData.userId }]
     })
       .then(qrInstance => {
-        if (qrInstance === null) return reject(ManagerError.BadRequest());
+        if (qrInstance == null) return reject(ManagerError.BadRequest());
         qrInstance.qheres.find(qhere => {
-          if (JSON.stringify(qhere._id) === JSON.stringify(req.params.id)) return resolve(qhere);
+          if (JSON.stringify(qhere._id) == JSON.stringify(req.params.id)) return resolve(qhere);
         });
       })
       .catch(err => reject(SystemError.BusinessException(err)));
@@ -207,7 +207,7 @@ ManagerService.getQrInfo = req =>
 
 ManagerService.sendNotification = req =>
   new Promise((resolve, reject) => {
-    if (req.body.title === '' || req.body.content === '') return reject(ManagerError.FieldEmpty());
+    if (req.body.title == '' || req.body.content == '') return reject(ManagerError.FieldEmpty());
     const newReq = {
       className: req.body.className,
       title: req.body.title,
