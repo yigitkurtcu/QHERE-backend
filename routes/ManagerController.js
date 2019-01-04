@@ -95,6 +95,16 @@ router.put('/createQr', [verifier.verifyToken, verifier.verifyManager], (req, re
     });
 });
 
+router.post('/finishQhere', [verifier.verifyToken, verifier.verifyManager], (req, res) => {
+  ManagerService.finishQhere(req)
+    .then(result => {
+      respond.success(res, result);
+    })
+    .catch(err => {
+      respond.withError(res, err);
+    });
+});
+
 router.get('/getQrInfo/:id', [verifier.verifyToken, verifier.verifyManager], (req, res) => {
   ManagerService.getQrInfo(req)
     .then(result => {

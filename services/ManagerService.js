@@ -191,6 +191,33 @@ ManagerService.createQr = req =>
       .catch(err => reject(SystemError.BusinessException(err)));
   });
 
+ManagerService.finishQhere = req =>
+  new Promise((resolve, reject) => {
+    Class.findOne({ _id: req.body.classId })
+      .then(classInstance => {
+        if (!classInstance) return reject(SystemError.BusinessException());
+
+        const qhereInstance = classInstance.qheres[classInstance.qheres.length - 1];
+        qhereInstance.isActive = false;
+        classInstance.qheres[qhereInstance.number - 1] = qhereInstance;
+
+        Class.findOneAndUpdate(
+          { _id: req.body.classId },
+          { qheres: classInstance.qheres },
+          { new: true }
+        )
+          .then(() => {
+            return resolve(qhereInstance);
+          })
+          .catch(err => {
+            return reject(err);
+          });
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+
 ManagerService.getQrInfo = req =>
   new Promise((resolve, reject) => {
     Class.findOne({

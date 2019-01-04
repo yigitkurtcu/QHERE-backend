@@ -170,6 +170,9 @@ studentService.joinRollCall = req =>
               return reject(StudentError.notInClass());
 
             const qhereInstance = classInstance.qheres.find(qhere => qhere._id == qhereId);
+
+            if (!qhereInstance.isActive) return reject(StudentError.inActiveQhere());
+
             if (qhereInstance.students.find(student => student._id == studentId))
               return reject(StudentError.StudentAlreadyJoinRollCall());
 

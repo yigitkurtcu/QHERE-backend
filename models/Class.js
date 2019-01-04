@@ -46,6 +46,10 @@ const classSchema = mongoose.Schema({
         type: Number,
         required: true
       },
+      isActive: {
+        type: Boolean,
+        default: true
+      },
       students: [
         {
           userId: String,

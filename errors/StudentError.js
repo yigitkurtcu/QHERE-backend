@@ -42,4 +42,10 @@ StudentError.notInClass = () => ({
   message: 'The student is not in the class.'
 });
 
+StudentError.inActiveQhere = () => ({
+  status_code: 400,
+  name: 'inActiveQhere',
+  message: 'This qhere is inactive.'
+});
+
 module.exports = StudentError;
