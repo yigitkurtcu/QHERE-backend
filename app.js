@@ -4,7 +4,6 @@ const logger = require('morgan');
 const cors = require('cors');
 const http = require('http');
 const socketio = require('socket.io');
-const rateLimit = require('express-rate-limit');
 const requestIp = require('request-ip');
 const helmet = require('helmet');
 
@@ -29,11 +28,6 @@ require('./helpers/socket')(io);
 const app = express();
 
 app.enable('trust proxy');
-
-const limiter = rateLimit({
-  windowMs: 20 * 60 * 1000, // 20 minutes
-  max: 5
-});
 
 app.use(
   helmet({
@@ -64,7 +58,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(limiter, (req, res) => {
+app.use((req, res) => {
   respond.withError(res, SystemError.WrongEndPoint());
 });
 
