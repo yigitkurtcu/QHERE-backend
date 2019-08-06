@@ -47,10 +47,10 @@ app.use(
 app.use(cookieParser());
 app.use(cors());
 
-app.use('/user', UserController);
-app.use('/manager', ManagerController);
-app.use('/student', StudentController);
-app.use('/auth', AuthController);
+app.use('/qhere/user', UserController);
+app.use('/qhere/manager', ManagerController);
+app.use('/qhere/student', StudentController);
+app.use('/qhere/auth', AuthController);
 
 app.use(requestIp.mw());
 app.use((req, res, next) => {
