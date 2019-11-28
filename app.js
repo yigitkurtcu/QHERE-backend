@@ -54,7 +54,7 @@ app.use('/qhere/auth', AuthController);
 
 app.use(requestIp.mw());
 app.use((req, res, next) => {
-  console.log('IP: ', req.clientIp);
+  console.log('IP Address: ', req.clientIp);
   next();
 });
 
